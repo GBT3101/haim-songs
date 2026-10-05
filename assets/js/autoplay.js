@@ -4,6 +4,8 @@
    מספיק זמן כדי לקרוא את המילים בנחת.
    גלילה ידנית עוצרת את הניגון לרגע, והוא ממשיך מעצמו
    שנייה אחרי שהגלילה הידנית נגמרת.
+   אם קיימות הקלטות (assets/audio), קול מספרת מקריא כל בית
+   כשהוא מופיע, והגלילה ממתינה עד שההקראה מסתיימת.
    ========================================================= */
 (function () {
   'use strict';
@@ -28,6 +30,32 @@
   let setY = -1;         // המיקום האחרון שהניגון גלל אליו
   let wakeLock = null;
 
+  /* ---------- הקראה ---------- */
+  const AUDIO_DIR = 'assets/audio/';
+  const SILENCE = 'data:audio/wav;base64,UklGRiQAAABXQVZFZm10IBAAAAABAAEAQB8AAEAfAAABAAgAZGF0YQAAAAA=';
+  const voice = new Audio();
+  voice.preload = 'auto';
+  let narration = null;   // { clips: { id: { file, dur } } }
+  let activeClip = null;  // ההקראה שנמצאת עכשיו בנגן
+  let enteredIdx = -1;
+  fetch(AUDIO_DIR + 'narration.json')
+    .then((r) => (r.ok ? r.json() : null))
+    .then((m) => { narration = m && m.clips ? m : null; })
+    .catch(() => { narration = null; });
+  const clip = (id) => (narration && narration.clips[id]) || null;
+
+  function speak(id) {
+    activeClip = id;
+    voice.src = AUDIO_DIR + narration.clips[id].file;
+    voice.play().catch(() => {});
+  }
+  // נכנסים לקטע במסלול: מתחילים את ההקראה שלו, או ממשיכים אותה אם נעצרה באמצע
+  function voiceFor(seg) {
+    if (!seg.clip || !narration) return;
+    if (seg.clip !== activeClip) speak(seg.clip);
+    else if (voice.paused && !voice.ended) voice.play().catch(() => {});
+  }
+
   const scrollMax = () => root.scrollHeight - window.innerHeight;
   const pageTop = (el) => el.getBoundingClientRect().top + window.scrollY;
   const countWords = (stanza) => Array.from(stanza.querySelectorAll('.line'))
@@ -37,7 +65,8 @@
   /* ---------- מסלול הגלילה: תנועות ועצירות ---------- */
   function buildPlan() {
     const segs = [];
-    const move = (y0, y1, d, e = 'lin') => { if (d > 0) segs.push({ y0, y1, d, e }); };
+    const move = (y0, y1, d, e = 'lin', clipId = null) => { if (d > 0) segs.push({ y0, y1, d, e, clip: clipId }); };
+    const withClip = (id) => (clip(id) ? id : null);
     let y = 0;
     songs.forEach((s, si) => {
       const top = pageTop(s.sec);
@@ -46,15 +75,31 @@
       const at = (u) => top + dist * Math.min(1, u / D);
       const stanzas = s.sec.querySelectorAll('.stanza');
 
-      move(y, top, si === 0 ? 4 : 3.2, 'io');           // מעבר אל השיר
+      const id = s.sec.id;
+      if (si === 0) {                                   // מהשער אל השיר הראשון — "מֵאֵת חַיִּים אָבִיטָן"
+        const hero = clip('hero');
+        move(y, top, Math.max(4, hero ? hero.dur + .6 : 0), 'io', withClip('hero'));
+      } else {
+        move(y, top, 3.2, 'io');                        // מעבר אל השיר
+      }
       let t = 0;
       s.beats.forEach((len, i) => {
-        if (i === 0) { move(at(0), at(len), len / INTRO_SPEED); t += len; return; }
+        if (i === 0) {                                  // כותרת השיר
+          const title = clip(id + '-0');
+          move(at(0), at(len), Math.max(len / INTRO_SPEED, title ? title.dur + 1 : 0), 'lin', withClip(id + '-0'));
+          t += len;
+          return;
+        }
         const lastBeat = i === s.beats.length - 1;
         const holdAt = lastBeat ? t + len : t + len - 1; // רגע לפני שהבית נעלם
-        move(at(t), at(holdAt), (holdAt - t) / SPEED);
+        const cueAt = t + 1.3;                           // השורה הראשונה כבר על המסך — ההקראה מתחילה
+        const clipId = withClip(id + '-' + i);
+        move(at(t), at(cueAt), (cueAt - t) / SPEED);
+        move(at(cueAt), at(holdAt), (holdAt - cueAt) / SPEED, 'lin', clipId);
         const shown = (holdAt - t - 1.4) / SPEED;        // כמה זמן הבית כבר היה על המסך
-        move(at(holdAt), at(holdAt), Math.max(lastBeat ? 3 : .8, readSecs(stanzas[i - 1]) - shown));
+        let hold = Math.max(lastBeat ? 3 : .8, readSecs(stanzas[i - 1]) - shown);
+        if (clipId) hold = Math.max(hold, clip(clipId).dur + .9 - (holdAt - cueAt) / SPEED);
+        move(at(holdAt), at(holdAt), hold, 'lin', clipId);
         if (!lastBeat) move(at(holdAt), at(t + len), (t + len - holdAt) / SPEED);
         t += len;
       });
@@ -68,6 +113,7 @@
   function locate(y) {
     for (let i = 0; i < plan.length; i++) {
       const s = plan[i];
+      if (s.y1 === s.y0) { if (Math.abs(s.y0 - y) <= 2) return i; continue; }  // עצירה במקום הנוכחי
       if (s.y1 <= y + 1) continue;
       if (y > s.y0) plan[i] = { ...s, y0: y, d: s.d * (s.y1 - y) / (s.y1 - s.y0) };
       return i;
@@ -82,6 +128,7 @@
     let s = plan[idx];
     while (s && elapsed >= s.d) { elapsed -= s.d; s = plan[++idx]; }
     if (!s) { window.scrollTo(0, scrollMax()); stop(); return; }
+    if (idx !== enteredIdx) { enteredIdx = idx; voiceFor(s); }
     setY = s.y0 + (s.y1 - s.y0) * EASE[s.e](elapsed / s.d);
     window.scrollTo(0, setY);
     raf = requestAnimationFrame(tick);
@@ -94,6 +141,7 @@
     idx = locate(window.scrollY);
     elapsed = 0;
     setY = window.scrollY;
+    enteredIdx = -1;
     lastTime = performance.now();
     cancelAnimationFrame(raf);
     raf = requestAnimationFrame(tick);
@@ -103,6 +151,9 @@
     root.style.scrollBehavior = 'auto';
     if (window.scrollY >= scrollMax() - 4) window.scrollTo(0, 0);  // בסוף — מתחילים מחדש
     playing = true;
+    activeClip = null;
+    voice.src = SILENCE;                 // הפעלה בתוך הלחיצה מאפשרת השמעה בהמשך גם באייפון
+    voice.play().catch(() => {});
     updateButton();
     keepAwake();
     run();
@@ -113,6 +164,8 @@
     held = false;
     cancelAnimationFrame(raf);
     clearTimeout(resumeTimer);
+    voice.pause();
+    activeClip = null;
     root.style.scrollBehavior = '';
     releaseAwake();
     updateButton();
@@ -128,7 +181,7 @@
   /* ---------- גלילה ידנית: עצירה זמנית והמשך אחרי שנייה ---------- */
   function hold() {
     if (!playing) return;
-    if (!held) { held = true; cancelAnimationFrame(raf); }
+    if (!held) { held = true; cancelAnimationFrame(raf); voice.pause(); }
     clearTimeout(resumeTimer);
     resumeTimer = setTimeout(() => {
       if (playing && held && !fingerDown) run();   // אצבע על המסך — ממתינים שתורם
