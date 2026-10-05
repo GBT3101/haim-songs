@@ -206,6 +206,39 @@ a { color: inherit; }
   animation: scrollHint 1.8s ease-in-out infinite; }
 @keyframes scrollHint { 0% { transform: translateY(0); opacity: 0; } 25% { opacity: 1; } 80% { transform: translateY(26px); opacity: 0; } 100% { opacity: 0; } }
 
+/* ---------- כפתור ההפעלה ---------- */
+.play-btn { display: none; }
+.js .play-btn {
+  display: inline-flex; align-items: center; justify-content: center; gap: .4em;
+  font-family: var(--display); font-weight: 400; line-height: 1; color: #fffaf0;
+  background: linear-gradient(180deg, #d97a40, #b2512a); border: 0; border-radius: 999px; cursor: pointer;
+  box-shadow: 0 .14em 0 #7f3416, 0 .4em .7em -.25em rgba(80, 30, 0, .55);
+  transition: transform .18s, box-shadow .18s, opacity .35s, translate .35s;
+  -webkit-tap-highlight-color: transparent; touch-action: manipulation;
+}
+.play-btn:hover { transform: translateY(-2px); }
+.play-btn:active { transform: translateY(.1em); box-shadow: 0 .04em 0 #7f3416, 0 .2em .4em -.2em rgba(80, 30, 0, .5); }
+.play-btn__icon { width: 1em; height: 1em; fill: currentColor; flex: none; }
+.play-btn .i-pause, .play-btn[data-state="playing"] .i-play { display: none; }
+.play-btn[data-state="playing"] .i-pause { display: inline; }
+.play-btn__label { padding-bottom: .06em; }
+
+.hero__play {
+  position: relative; z-index: 5; margin-top: clamp(16px, 3.2vmin, 34px);
+  font-size: clamp(28px, 5.2vmin, 46px); padding: .36em 1.05em .4em;
+  opacity: 0; animation: riseIn .9s cubic-bezier(.2, .8, .2, 1) 2.3s forwards;
+}
+.hero__play::after { content: ''; position: absolute; inset: -7px; border-radius: inherit; border: 3px solid #d97a40;
+  opacity: 0; animation: ring 2.6s ease-out 3.3s infinite; pointer-events: none; }
+.hero__play[data-state="playing"]::after { animation: none; }
+@keyframes ring { 0% { opacity: .75; transform: scale(.96); } 100% { opacity: 0; transform: scale(1.22, 1.45); } }
+
+.player-fab {
+  position: fixed; z-index: 60; top: calc(env(safe-area-inset-top, 0px) + 12px); left: max(12px, env(safe-area-inset-left));
+  font-size: clamp(21px, 3.2vmin, 27px); padding: .42em .9em .46em; min-height: 54px;
+}
+.player-fab.is-hidden { opacity: 0; translate: 0 -30px; pointer-events: none; }
+
 /* =========================================================
    שיר — במה דביקה
    ========================================================= */

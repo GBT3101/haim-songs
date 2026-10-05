@@ -69,7 +69,7 @@
 
   /* ---------- שירים ---------- */
   const songs = Array.from(document.querySelectorAll('.song'));
-  const registry = (window.__songs = []);
+  const registry = (window.SONG_TIMELINES = []);
 
   songs.forEach((sec) => {
     const sc = ART.scenes[sec.dataset.scene];
