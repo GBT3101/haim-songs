@@ -2,26 +2,31 @@
    ניגון אוטומטי — גלילה בקצב קריאה נוח
    הסצנות מתנגנות במהירותן הטבעית, ובכל בית הגלילה נעצרת
    מספיק זמן כדי לקרוא את המילים בנחת.
+   גלילה ידנית עוצרת את הניגון לרגע, והוא ממשיך מעצמו
+   שנייה אחרי שהגלילה הידנית נגמרת.
    ========================================================= */
 (function () {
   'use strict';
   const songs = window.SONG_TIMELINES;
-  if (!songs || !songs.length) return;
+  const button = document.querySelector('.hero__play');
+  if (!songs || !songs.length || !button) return;
 
   const root = document.documentElement;
-  const buttons = Array.from(document.querySelectorAll('[data-play]'));
-  const heroBtn = document.querySelector('.hero__play');
-  const fab = document.querySelector('.player-fab');
+  const label = button.querySelector('.play-btn__label');
 
   const SPEED = 0.85;         // יחידות ציר-זמן בשנייה: בית רגיל ≈ 12 שניות
   const INTRO_SPEED = 1.4;    // כותרת השיר עוברת מעט מהר יותר
   const SECS_PER_WORD = 0.8;  // זמן קריאה לכל מילה
-  const LABELS = { idle: 'הַפְעָלָה', playing: 'הַשְׁהָיָה', paused: 'הֶמְשֵׁךְ' };
+  const RESUME_AFTER = 1000;  // המשך אוטומטי אחרי גלילה ידנית (מ"ש)
+  const LABELS = { idle: 'הַפְעָלָה', playing: 'הַשְׁהָיָה' };
   const EASE = { lin: (p) => p, io: (p) => .5 - Math.cos(Math.PI * p) / 2 };
 
-  let state = 'idle';
-  let plan = [], idx = 0, elapsed = 0, lastTime = 0, raf = 0, pausedAt = -1;
-  let heroBtnVisible = true, wakeLock = null;
+  let playing = false;   // מצב הכפתור
+  let held = false;      // נעצר זמנית בגלל גלילה ידנית
+  let fingerDown = false;
+  let plan = [], idx = 0, elapsed = 0, lastTime = 0, raf = 0, resumeTimer = 0;
+  let setY = -1;         // המיקום האחרון שהניגון גלל אליו
+  let wakeLock = null;
 
   const scrollMax = () => root.scrollHeight - window.innerHeight;
   const pageTop = (el) => el.getBoundingClientRect().top + window.scrollY;
@@ -77,60 +82,75 @@
     let s = plan[idx];
     while (s && elapsed >= s.d) { elapsed -= s.d; s = plan[++idx]; }
     if (!s) { window.scrollTo(0, scrollMax()); stop(); return; }
-    window.scrollTo(0, s.y0 + (s.y1 - s.y0) * EASE[s.e](elapsed / s.d));
+    setY = s.y0 + (s.y1 - s.y0) * EASE[s.e](elapsed / s.d);
+    window.scrollTo(0, setY);
     raf = requestAnimationFrame(tick);
   }
 
-  function play() {
+  // מתחיל לגלול מהמקום שבו הדף נמצא עכשיו
+  function run() {
+    held = false;
+    plan = buildPlan();
+    idx = locate(window.scrollY);
+    elapsed = 0;
+    setY = window.scrollY;
+    lastTime = performance.now();
+    cancelAnimationFrame(raf);
+    raf = requestAnimationFrame(tick);
+  }
+
+  function start() {
     root.style.scrollBehavior = 'auto';
     if (window.scrollY >= scrollMax() - 4) window.scrollTo(0, 0);  // בסוף — מתחילים מחדש
-    const y = window.scrollY;
-    const resume = state === 'paused' && Math.abs(y - pausedAt) < 3 && idx < plan.length;
-    if (!resume) { plan = buildPlan(); idx = locate(y); elapsed = 0; }
-    setState('playing');
+    playing = true;
+    updateButton();
     keepAwake();
-    lastTime = performance.now();
-    raf = requestAnimationFrame(tick);
+    run();
   }
 
-  function halt(next) {
+  function stop() {
+    playing = false;
+    held = false;
     cancelAnimationFrame(raf);
+    clearTimeout(resumeTimer);
     root.style.scrollBehavior = '';
     releaseAwake();
-    setState(next);
-  }
-  function pause() { if (state !== 'playing') return; pausedAt = window.scrollY; halt('paused'); }
-  function stop() { idx = 0; elapsed = 0; halt('idle'); }
-
-  /* ---------- כפתורים ---------- */
-  function setState(next) {
-    state = next;
-    buttons.forEach((b) => {
-      b.dataset.state = next;
-      b.querySelector('.play-btn__label').textContent = LABELS[next];
-    });
-    updateFab();
-  }
-  function updateFab() {
-    if (fab) fab.classList.toggle('is-hidden', state === 'idle' && heroBtnVisible);
-  }
-  buttons.forEach((b) => b.addEventListener('click', () => (state === 'playing' ? pause() : play())));
-  if (heroBtn && 'IntersectionObserver' in window) {
-    new IntersectionObserver(([en]) => { heroBtnVisible = en.isIntersecting; updateFab(); }).observe(heroBtn);
+    updateButton();
   }
 
-  /* ---------- גלילה ידנית עוצרת את הניגון ---------- */
+  function updateButton() {
+    const state = playing ? 'playing' : 'idle';
+    button.dataset.state = state;
+    label.textContent = LABELS[state];
+  }
+  button.addEventListener('click', () => (playing ? stop() : start()));
+
+  /* ---------- גלילה ידנית: עצירה זמנית והמשך אחרי שנייה ---------- */
+  function hold() {
+    if (!playing) return;
+    if (!held) { held = true; cancelAnimationFrame(raf); }
+    clearTimeout(resumeTimer);
+    resumeTimer = setTimeout(() => {
+      if (playing && held && !fingerDown) run();   // אצבע על המסך — ממתינים שתורם
+    }, RESUME_AFTER);
+  }
+  const onButton = (e) => e.target instanceof Element && e.target.closest('.hero__play');
+  const liftFinger = () => { fingerDown = false; if (held) hold(); };
   const NAV_KEYS = new Set(['ArrowUp', 'ArrowDown', 'PageUp', 'PageDown', 'Home', 'End', ' ']);
-  window.addEventListener('wheel', pause, { passive: true });
-  window.addEventListener('touchmove', pause, { passive: true });
-  window.addEventListener('keydown', (e) => { if (NAV_KEYS.has(e.key) && !e.target.closest('button')) pause(); });
-  document.addEventListener('click', (e) => { if (e.target.closest('a[href^="#"]')) pause(); });
+
+  window.addEventListener('wheel', hold, { passive: true });
+  window.addEventListener('touchstart', (e) => { if (onButton(e)) return; fingerDown = true; hold(); }, { passive: true });
+  window.addEventListener('touchmove', hold, { passive: true });
+  window.addEventListener('touchend', liftFinger, { passive: true });
+  window.addEventListener('touchcancel', liftFinger, { passive: true });
+  window.addEventListener('keydown', (e) => { if (NAV_KEYS.has(e.key) && !onButton(e)) hold(); });
+  // כל גלילה שלא הניגון עשה (פס גלילה, קישור, תנופת אצבע) נחשבת ידנית
+  window.addEventListener('scroll', () => {
+    if (playing && (held || Math.abs(window.scrollY - setY) > 3)) hold();
+  }, { passive: true });
 
   // שינוי גודל חלון באמצע ניגון — מחשבים את המסלול מחדש מהמקום הנוכחי
-  window.ScrollTrigger && ScrollTrigger.addEventListener('refresh', () => {
-    if (state !== 'playing') return;
-    plan = buildPlan(); idx = locate(window.scrollY); elapsed = 0;
-  });
+  if (window.ScrollTrigger) ScrollTrigger.addEventListener('refresh', () => { if (playing && !held) run(); });
 
   /* ---------- המסך לא נכבה בזמן הניגון ---------- */
   async function keepAwake() {
@@ -141,6 +161,6 @@
     wakeLock = null;
   }
   document.addEventListener('visibilitychange', () => {
-    if (document.visibilityState === 'visible' && state === 'playing') keepAwake();
+    if (document.visibilityState === 'visible' && playing) keepAwake();
   });
 })();
