@@ -28,9 +28,9 @@ const PDFS = path.join(OUT, 'pdf');
 const VIEW = { width: 794, height: 1123 };
 const SCALE = 3;
 
-// רגע השיא של כל שיר: [פעימה, שניות מתחילתה]
+// רגע השיא של כל שיר: [פעימה, שניות מתחילתה, תיקונים לצילום (data-a → מאפייני gsap)]
 const PEAK = {
-  salad: [7, 9.0],       // הסלט מוכן, אמא מערבבת, נצנוצים
+  salad: [1, 9.0, { water: { y: 4 } }], // הירקות בוכים והקערה מתמלאת בדמעות
   eggplant: [5, 10.0],   // החציל קופץ לסיר
   kingfisher: [4, 3.0],  // השלדג ממריא עם הדג
   noblebird: [3, 2.1],   // אמא ציפור נועצת מקור — טוק!
@@ -79,16 +79,17 @@ await page.evaluate(() => {
   document.querySelectorAll('.song').forEach((s) => s.classList.add('is-live'));
   document.querySelectorAll('.backdrop').forEach((b) => gsap.set(b, { yPercent: 0 }));
 });
-const shoot = async (id, beat, off, file) => {
-  await page.evaluate(([id, beat, off]) => {
+const shoot = async (id, beat, off, tweak, file) => {
+  await page.evaluate(([id, beat, off, tweak]) => {
     const r = SONG_TIMELINES.find((x) => x.sec.id === id);
     r.tl.time(r.tl.labels['b' + beat] + off, false);
-  }, [id, beat, off]);
+    Object.entries(tweak || {}).forEach(([k, v]) => gsap.set(r.sec.querySelector(`[data-a="${k}"]`), v));
+  }, [id, beat, off, tweak]);
   await page.waitForTimeout(250);
   await page.locator(`#${id} .stage`).screenshot({ path: path.join(FRAMES, file), type: 'jpeg', quality: 92 });
 };
-for (const s of songs) await shoot(s.id, ...PEAK[s.id], s.id + '.jpg');
-await shoot(...BACK, 'back.jpg');
+for (const s of songs) { const [b, o, tw] = PEAK[s.id]; await shoot(s.id, b, o, tw, s.id + '.jpg'); }
+await shoot(...BACK, null, 'back.jpg');
 
 /* ---------- בניית הספר ---------- */
 const esc = (t) => t.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
