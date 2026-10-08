@@ -33,3 +33,19 @@ Settings → Pages → Build and deployment → Source: **Deploy from a branch**
 python3 -m http.server
 ```
 ואז לפתוח את http://localhost:8000
+
+## ספר להדפסה
+
+בתיקייה `print/` — ספר שירים בגודל A4: כריכה, דף לכל שיר (המילים המלאות על רקע רגע השיא של השיר) וגב הספר.
+
+- `print/haim-songs-book.pdf` — הספר כולו (8 עמודים).
+- `print/pdf/` — כל דף כקובץ PDF נפרד (`00-cover` … `07-back`).
+- `print/book.html` — מקור הדפים (לצפייה דרך השרת המקומי).
+
+הדפים נבנים מתוך האתר עצמו — המילים והאיורים זהים. אחרי שינוי בשירים או באיורים:
+
+```
+python3 -m http.server 8765 &
+node tools/make_book.mjs
+```
+רגעי השיא ומיקום כרטיס המילים מוגדרים בראש `tools/make_book.mjs` (`PEAK`, `CARD_TOP`).

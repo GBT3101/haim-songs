@@ -1,0 +1,636 @@
+<!doctype html>
+<html lang="he" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>מאת: חיים אביטן — ספר שירים להדפסה</title>
+<style>
+@font-face { font-family: 'Frank Ruhl Libre'; font-weight: 500; src: url(../assets/fonts/frank-ruhl-libre-hebrew-500-normal.woff2) format('woff2'); unicode-range: U+0307-0308, U+0590-05FF, U+200C-2010, U+20AA, U+25CC, U+FB1D-FB4F; }
+@font-face { font-family: 'Frank Ruhl Libre'; font-weight: 500; src: url(../assets/fonts/frank-ruhl-libre-latin-500-normal.woff2) format('woff2'); unicode-range: U+0000-00FF, U+2000-206F; }
+@font-face { font-family: 'Frank Ruhl Libre'; font-weight: 700; src: url(../assets/fonts/frank-ruhl-libre-hebrew-700-normal.woff2) format('woff2'); unicode-range: U+0307-0308, U+0590-05FF, U+200C-2010, U+20AA, U+25CC, U+FB1D-FB4F; }
+@font-face { font-family: 'Suez One'; src: url(../assets/fonts/suez-one-hebrew-400-normal.woff2) format('woff2'); unicode-range: U+0307-0308, U+0590-05FF, U+200C-2010, U+20AA, U+25CC, U+FB1D-FB4F; }
+@font-face { font-family: 'Suez One'; src: url(../assets/fonts/suez-one-latin-400-normal.woff2) format('woff2'); unicode-range: U+0000-00FF, U+2000-206F; }
+
+@page { size: A4; margin: 0; }
+:root { --ink: #2b1a10; --serif: 'Frank Ruhl Libre', serif; --display: 'Suez One', serif; }
+* { box-sizing: border-box; }
+html, body { margin: 0; padding: 0; background: #8d8478; color: var(--ink); }
+body { -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+.page { position: relative; width: 210mm; height: 297mm; overflow: hidden; margin: 10mm auto; background: var(--bg, #fffaf0);
+  box-shadow: 0 10px 40px rgba(0,0,0,.35); break-after: page; page-break-after: always; }
+@media print { html, body { background: none; } .page { margin: 0; box-shadow: none; } }
+.art { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; display: block; }
+
+/* ----- דף שיר ----- */
+.card { position: absolute; left: 13mm; right: 13mm; bottom: 14mm; top: var(--top, 160mm); z-index: 2;
+  display: flex; flex-direction: column; align-items: center;
+  padding: 6mm 10mm 7mm; border-radius: 9mm;
+  background: radial-gradient(120% 80% at 50% 0%, rgba(255,255,255,.75), transparent 60%), var(--card);
+  box-shadow: inset 0 1.5px 0 rgba(255,255,255,.85), 0 9mm 16mm -7mm rgba(30,12,0,.5), 0 3mm 5mm -2mm rgba(30,12,0,.3); }
+.card::after { content: ''; position: absolute; inset: 2.6mm; border-radius: 7mm; border: 1.6px dashed var(--accent); opacity: .38; pointer-events: none; }
+.card__title { margin: 0; font-family: var(--display); font-weight: 400; line-height: 1.15; text-align: center;
+  font-size: 13mm; color: var(--title);
+  text-shadow: 0 .04em 0 var(--sh), .03em .03em 0 var(--sh), -.03em .03em 0 var(--sh), 0 .08em 0 var(--sh2), 0 .13em .1em rgba(0,0,0,.22); }
+.card__rule { display: flex; align-items: center; gap: 3mm; width: 62%; margin: .5mm 0 2.5mm; color: var(--accent); }
+.card__rule span { flex: 1; height: 1.4px; background: linear-gradient(90deg, transparent, var(--accent)); opacity: .6; }
+.card__rule span:last-child { transform: scaleX(-1); }
+.card__rule i { width: 7.5mm; height: 7.5mm; display: grid; place-items: center; }
+.card__rule i svg { width: 100%; height: 100%; }
+.lyrics { flex: 1; width: 100%; min-height: 0; display: flex; align-items: center; justify-content: center; overflow: hidden;
+  font-family: var(--serif); font-weight: 500; text-align: center; line-height: 1.5; font-size: var(--fs, 6mm); }
+.lyrics__in { flex: none; }
+.lyrics--two { display: flex; flex-direction: row; align-items: center; gap: 7mm; }
+.lyrics--two .col { flex: none; }
+.lyrics--two .divider { width: 1.4px; align-self: stretch; background: linear-gradient(transparent, var(--accent), transparent); opacity: .35; }
+.stanza { margin: 0 0 .75em; break-inside: avoid; }
+.stanza:last-child { margin-bottom: 0; }
+.line { display: block; white-space: nowrap; }
+.folio { position: absolute; bottom: 5.5mm; left: 0; right: 0; text-align: center; z-index: 3;
+  font-family: var(--display); font-size: 4.2mm; color: var(--accent); }
+.folio::before, .folio::after { content: '•'; margin: 0 2mm; opacity: .6; }
+.folio { color: #fffaf0; text-shadow: 0 .5px 2px rgba(0,0,0,.5); }
+
+/* ----- כריכה ----- */
+.cover .art { object-position: 50% 50%; }
+.cover__tag { position: absolute; z-index: 2; left: 0; right: 0; top: 183mm; text-align: center;
+  font-family: var(--display); font-size: 8mm; color: #8a3a1c; letter-spacing: .02em; }
+.cover__tag small { display: block; font-family: var(--serif); font-size: 5mm; color: #7a5a3a; margin-top: 2mm; }
+
+/* ----- גב ----- */
+.back__panel { position: absolute; z-index: 2; left: 34mm; right: 34mm; top: 62mm;
+  padding: 12mm 12mm 11mm; border-radius: 9mm; text-align: center;
+  background: radial-gradient(120% 80% at 50% 0%, rgba(255,255,255,.8), transparent 60%), #fffaf2;
+  box-shadow: 0 10mm 20mm -6mm rgba(0,0,0,.6); }
+.back__panel::after { content: ''; position: absolute; inset: 2.6mm; border-radius: 7mm; border: 1.6px dashed #b0263a; opacity: .38; }
+.back__by { font-family: var(--display); font-size: 12mm; line-height: 1.2; color: #ffe7a3; margin: 0 0 2mm;
+  text-shadow: 0 .04em 0 #b0263a, .03em .03em 0 #b0263a, -.03em .03em 0 #b0263a, 0 .08em 0 #4f0b16, 0 .13em .1em rgba(0,0,0,.25); }
+.back__sub { font-family: var(--serif); font-size: 5.2mm; color: #6b3a2a; margin: 0 0 7mm; }
+.toc { list-style: none; margin: 0; padding: 0; font-family: var(--serif); font-weight: 500; font-size: 6.4mm; }
+.toc li { display: flex; align-items: center; gap: 4mm; padding: 2.1mm 0; border-bottom: 1px dotted rgba(176,38,58,.3); }
+.toc li:last-child { border-bottom: 0; }
+.toc .ic { width: 11mm; height: 11mm; flex: none; }
+.toc .ic svg { width: 100%; height: 100%; }
+.toc .nm { flex: 1; text-align: right; }
+.toc .pg { font-family: var(--display); color: #b0263a; font-size: 5.2mm; }
+</style>
+</head>
+<body>
+<svg class="art-defs" width="0" height="0" style="position:absolute;width:0;height:0" aria-hidden="true" focusable="false"><defs>
+      <linearGradient id="gCarrot" x1="0" y1="0" x2="1" y2="0"><stop offset="0" stop-color="#ffb24d" stop-opacity="1"/><stop offset="0.45" stop-color="#f5801f" stop-opacity="1"/><stop offset="1" stop-color="#d65a10" stop-opacity="1"/></linearGradient>
+      <linearGradient id="gLeaf" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#9be063" stop-opacity="1"/><stop offset="1" stop-color="#3f9a35" stop-opacity="1"/></linearGradient>
+      <linearGradient id="gLeaf2" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#7fd05a" stop-opacity="1"/><stop offset="1" stop-color="#2f7f2c" stop-opacity="1"/></linearGradient>
+      <radialGradient id="gTomato" cx="0.38" cy="0.32" r="0.7" fx="0.38" fy="0.32"><stop offset="0" stop-color="#ff9a7e" stop-opacity="1"/><stop offset="0.5" stop-color="#ef3b2a" stop-opacity="1"/><stop offset="1" stop-color="#b01b14" stop-opacity="1"/></radialGradient>
+      <radialGradient id="gCabHead" cx="0.45" cy="0.4" r="0.65" fx="0.45" fy="0.4"><stop offset="0" stop-color="#f4fde2" stop-opacity="1"/><stop offset="0.6" stop-color="#c8eba2" stop-opacity="1"/><stop offset="1" stop-color="#86c766" stop-opacity="1"/></radialGradient>
+      <radialGradient id="gCabLeaf" cx="0.6" cy="0.4" r="0.8" fx="0.6" fy="0.4"><stop offset="0" stop-color="#c3eb98" stop-opacity="1"/><stop offset="1" stop-color="#5aa845" stop-opacity="1"/></radialGradient>
+      <linearGradient id="gCucumber" x1="0" y1="0" x2="1" y2="0"><stop offset="0" stop-color="#2f7a2c" stop-opacity="1"/><stop offset="0.45" stop-color="#6cbc52" stop-opacity="1"/><stop offset="1" stop-color="#2a6a28" stop-opacity="1"/></linearGradient>
+      <radialGradient id="gOnion" cx="0.4" cy="0.35" r="0.7" fx="0.4" fy="0.35"><stop offset="0" stop-color="#fde9bd" stop-opacity="1"/><stop offset="0.55" stop-color="#e9ad5c" stop-opacity="1"/><stop offset="1" stop-color="#b0642a" stop-opacity="1"/></radialGradient>
+      <radialGradient id="gEggplant" cx="0.36" cy="0.28" r="0.8" fx="0.36" fy="0.28"><stop offset="0" stop-color="#c497ea" stop-opacity="1"/><stop offset="0.45" stop-color="#7330a6" stop-opacity="1"/><stop offset="1" stop-color="#3a0f5e" stop-opacity="1"/></radialGradient>
+      <linearGradient id="gCalyx" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#8fd468" stop-opacity="1"/><stop offset="1" stop-color="#3a8733" stop-opacity="1"/></linearGradient>
+      <linearGradient id="gBowl" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#ffffff" stop-opacity="1"/><stop offset="0.6" stop-color="#eef4fa" stop-opacity="1"/><stop offset="1" stop-color="#c6d8ea" stop-opacity="1"/></linearGradient>
+      <linearGradient id="gBowlSide" x1="0" y1="0" x2="1" y2="0"><stop offset="0" stop-color="#9fb8d0" stop-opacity="0.55"/><stop offset="0.18" stop-color="#ffffff" stop-opacity="0"/><stop offset="0.82" stop-color="#ffffff" stop-opacity="0"/><stop offset="1" stop-color="#9fb8d0" stop-opacity="0.6"/></linearGradient>
+      <radialGradient id="gBowlIn" cx="0.5" cy="0.2" r="0.9" fx="0.5" fy="0.2"><stop offset="0" stop-color="#a9c3d6" stop-opacity="1"/><stop offset="1" stop-color="#6f8ca4" stop-opacity="1"/></radialGradient>
+      <linearGradient id="gGold" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#fff3b8" stop-opacity="1"/><stop offset="0.4" stop-color="#f4c54f" stop-opacity="1"/><stop offset="1" stop-color="#c48419" stop-opacity="1"/></linearGradient>
+      <linearGradient id="gGoldH" x1="0" y1="0" x2="1" y2="0"><stop offset="0" stop-color="#c48419" stop-opacity="1"/><stop offset="0.5" stop-color="#ffe58a" stop-opacity="1"/><stop offset="1" stop-color="#c48419" stop-opacity="1"/></linearGradient>
+      <linearGradient id="gWood" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#e0a96c" stop-opacity="1"/><stop offset="1" stop-color="#a8682f" stop-opacity="1"/></linearGradient>
+      <linearGradient id="gBark" x1="0" y1="0" x2="1" y2="0"><stop offset="0" stop-color="#7a4a2a" stop-opacity="1"/><stop offset="0.5" stop-color="#9b6440" stop-opacity="1"/><stop offset="1" stop-color="#6a3c20" stop-opacity="1"/></linearGradient>
+      <linearGradient id="gKfBlue" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#4fd4f5" stop-opacity="1"/><stop offset="0.5" stop-color="#1fa2e0" stop-opacity="1"/><stop offset="1" stop-color="#126fb8" stop-opacity="1"/></linearGradient>
+      <linearGradient id="gKfOrange" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#ffbf78" stop-opacity="1"/><stop offset="1" stop-color="#ee7424" stop-opacity="1"/></linearGradient>
+      <linearGradient id="gWater" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#8fdcf3" stop-opacity="1"/><stop offset="0.25" stop-color="#3fa6d6" stop-opacity="1"/><stop offset="1" stop-color="#174f86" stop-opacity="1"/></linearGradient>
+      <linearGradient id="gCat" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#ffc47a" stop-opacity="1"/><stop offset="1" stop-color="#e8892f" stop-opacity="1"/></linearGradient>
+      <radialGradient id="gCatHead" cx="0.45" cy="0.4" r="0.7" fx="0.45" fy="0.4"><stop offset="0" stop-color="#ffd59a" stop-opacity="1"/><stop offset="0.7" stop-color="#f5a046" stop-opacity="1"/><stop offset="1" stop-color="#e0832a" stop-opacity="1"/></radialGradient>
+      <linearGradient id="gBirdBack" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#c58956" stop-opacity="1"/><stop offset="1" stop-color="#7e4a2a" stop-opacity="1"/></linearGradient>
+      <radialGradient id="gChick" cx="0.4" cy="0.35" r="0.75" fx="0.4" fy="0.35"><stop offset="0" stop-color="#fff6b8" stop-opacity="1"/><stop offset="0.6" stop-color="#ffd94d" stop-opacity="1"/><stop offset="1" stop-color="#f2b318" stop-opacity="1"/></radialGradient>
+      <radialGradient id="gTooth" cx="0.4" cy="0.3" r="0.8" fx="0.4" fy="0.3"><stop offset="0" stop-color="#ffffff" stop-opacity="1"/><stop offset="0.6" stop-color="#f5f8fc" stop-opacity="1"/><stop offset="1" stop-color="#d3dfeb" stop-opacity="1"/></radialGradient>
+      <linearGradient id="gGum" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#ffc2cd" stop-opacity="1"/><stop offset="1" stop-color="#ef7f98" stop-opacity="1"/></linearGradient>
+      <radialGradient id="gRabbit" cx="0.45" cy="0.35" r="0.75" fx="0.45" fy="0.35"><stop offset="0" stop-color="#ffffff" stop-opacity="1"/><stop offset="0.65" stop-color="#f4f0f6" stop-opacity="1"/><stop offset="1" stop-color="#d8cfe2" stop-opacity="1"/></radialGradient>
+      <linearGradient id="gPot" x1="0" y1="0" x2="1" y2="0"><stop offset="0" stop-color="#a71f18" stop-opacity="1"/><stop offset="0.3" stop-color="#ef5040" stop-opacity="1"/><stop offset="0.55" stop-color="#d93a2c" stop-opacity="1"/><stop offset="1" stop-color="#8d150f" stop-opacity="1"/></linearGradient>
+      <linearGradient id="gBeam" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#fff7d6" stop-opacity="0.75"/><stop offset="1" stop-color="#fff7d6" stop-opacity="0"/></linearGradient>
+      <radialGradient id="gGlow" cx="0.5" cy="0.5" r="0.5" fx="0.5" fy="0.5"><stop offset="0" stop-color="#fff3b0" stop-opacity="0.95"/><stop offset="1" stop-color="#fff3b0" stop-opacity="0"/></radialGradient>
+      <radialGradient id="gGlowW" cx="0.5" cy="0.5" r="0.5" fx="0.5" fy="0.5"><stop offset="0" stop-color="#ffffff" stop-opacity="0.9"/><stop offset="1" stop-color="#ffffff" stop-opacity="0"/></radialGradient>
+      <radialGradient id="gShadow" cx="0.5" cy="0.5" r="0.5" fx="0.5" fy="0.5"><stop offset="0" stop-color="#000" stop-opacity="0.32"/><stop offset="1" stop-color="#000" stop-opacity="0"/></radialGradient>
+      <linearGradient id="gSkin" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#ffdcbc" stop-opacity="1"/><stop offset="1" stop-color="#f0b48a" stop-opacity="1"/></linearGradient>
+      <radialGradient id="gSkinR" cx="0.45" cy="0.4" r="0.7" fx="0.45" fy="0.4"><stop offset="0" stop-color="#ffe6cf" stop-opacity="1"/><stop offset="0.7" stop-color="#ffcfa8" stop-opacity="1"/><stop offset="1" stop-color="#f2b088" stop-opacity="1"/></radialGradient>
+      <linearGradient id="gFish" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#ffd27a" stop-opacity="1"/><stop offset="1" stop-color="#ff7f2a" stop-opacity="1"/></linearGradient>
+      <linearGradient id="gFish2" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#d9f1ff" stop-opacity="1"/><stop offset="1" stop-color="#7fa9cf" stop-opacity="1"/></linearGradient>
+      <linearGradient id="gHat" x1="0" y1="0" x2="1" y2="0"><stop offset="0" stop-color="#3a3546" stop-opacity="1"/><stop offset="0.5" stop-color="#17141f" stop-opacity="1"/><stop offset="1" stop-color="#2a2533" stop-opacity="1"/></linearGradient>
+      <linearGradient id="gRed" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#ff5a6c" stop-opacity="1"/><stop offset="1" stop-color="#c41c35" stop-opacity="1"/></linearGradient>
+      <linearGradient id="gVelvet" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#e0384f" stop-opacity="1"/><stop offset="1" stop-color="#8f1022" stop-opacity="1"/></linearGradient>
+      <pattern id="pGingham" width="56" height="56" patternUnits="userSpaceOnUse">
+        <rect width="56" height="56" fill="#fff6ee"/><rect width="28" height="56" fill="#e8584a" opacity=".55"/>
+        <rect width="56" height="28" fill="#e8584a" opacity=".55"/></pattern>
+      <pattern id="pDots" width="22" height="22" patternUnits="userSpaceOnUse">
+        <circle cx="5" cy="5" r="3.2" fill="#fff" opacity=".85"/><circle cx="16" cy="16" r="3.2" fill="#fff" opacity=".85"/></pattern>
+      <pattern id="pPlanks" width="160" height="40" patternUnits="userSpaceOnUse">
+        <rect width="160" height="40" fill="#b07a45"/><rect width="160" height="3" fill="#7a4d26"/>
+        <rect x="70" width="3" height="40" fill="#8a5a2e"/><path d="M10 18 q30 -6 50 2 M90 26 q30 -8 60 0" stroke="#c99560" stroke-width="2" fill="none"/></pattern>
+    </defs></svg>
+  <section class="page cover" id="cover" style="--bg:#f7ecd6">
+    <img class="art" src="frames/cover.jpg" alt="">
+    <div class="cover__tag">שִׁירֵי יְלָדִים<small>שִׁשָּׁה שִׁירִים מְאֻיָּרִים</small></div>
+  </section>
+
+  <section class="page song" id="salad" style="--top:146mm;--bg:#fff1d8;--accent:#c8452c;--title:#fffaf0;--sh:#c8452c;--sh2:#7d2412;--card:#fffaf0">
+    <img class="art" src="frames/salad.jpg" alt="">
+    <article class="card">
+      <h2 class="card__title">סָלַט יְרָקוֹת</h2>
+      <div class="card__rule"><span></span><i><svg viewBox="-150 -130 300 300" aria-hidden="true" focusable="false"><g transform="rotate(28) translate(0 -40) scale(.95)"><g data-a="ic-carrot">
+      <g class="sway" style="--d:-3s">
+        <path d="M0 6 C -10 -26 -40 -44 -38 -76 C -18 -60 -6 -38 0 6Z" fill="url(#gLeaf)"></path>
+        <path d="M0 6 C -9 -38 -2 -78 6 -102 C 16 -70 9 -32 0 6Z" fill="#62b847"></path>
+        <path d="M0 6 C 12 -28 40 -44 46 -72 C 26 -58 10 -34 0 6Z" fill="url(#gLeaf2)"></path>
+        <path d="M2 2 C 2 -30 4 -60 6 -94" stroke="#3d8a30" stroke-width="2" fill="none" opacity=".6"></path>
+      </g>
+      <path d="M-29 8 C-31 -6 31 -6 29 8 C 25 82 11 170 3 228 C 1 235 -2 235 -3 228 C -13 170 -25 82 -29 8 Z" fill="url(#gCarrot)"></path>
+      <g stroke="#c4520e" stroke-width="2.6" stroke-linecap="round" fill="none" opacity=".75">
+        <path d="M-22 78 q8 5 15 2"></path><path d="M10 112 q8 3 12 -2"></path><path d="M-16 150 q6 4 11 1"></path><path d="M5 188 q5 2 8 -2"></path></g>
+      <path d="M-17 24 C -20 70 -12 130 -4 190" stroke="#fff" stroke-width="6" stroke-linecap="round" fill="none" opacity=".28"></path>
+      <g transform="translate(0 46) scale(0.95)" data-a="ic-carrot-face">
+      <ellipse cx="-21" cy="10" rx="7.5" ry="4.6" fill="#ff7f86" opacity=".5"></ellipse><ellipse cx="21" cy="10" rx="7.5" ry="4.6" fill="#ff7f86" opacity=".5"></ellipse>
+      <g data-a="ic-carrot-eyes"><g class="blink" style="--d:-0.5s">
+        <ellipse cx="-12" cy="0" rx="5.6" ry="7.6" fill="#2b1a12"></ellipse>
+        <ellipse cx="12" cy="0" rx="5.6" ry="7.6" fill="#2b1a12"></ellipse>
+        <circle cx="-10" cy="-3.2" r="2.4" fill="#fff"></circle><circle cx="14" cy="-3.2" r="2.4" fill="#fff"></circle>
+        <circle cx="-13.6" cy="3.2" r="1.1" fill="#fff" opacity=".8"></circle><circle cx="10.4" cy="3.2" r="1.1" fill="#fff" opacity=".8"></circle>
+      </g></g>
+      <g data-a="ic-carrot-dizzy" opacity="0" stroke="#2b1a12" stroke-width="2.2" fill="none" stroke-linecap="round"><path d="M-12 0 a1.6 1.6 0 1 1 3.2 0 a3.2 3.2 0 1 1 -6.4 0 a4.8 4.8 0 1 1 9.6 0 a6.2 6.2 0 1 1 -12.4 0"></path><path d="M12 0 a1.6 1.6 0 1 1 3.2 0 a3.2 3.2 0 1 1 -6.4 0 a4.8 4.8 0 1 1 9.6 0 a6.2 6.2 0 1 1 -12.4 0"></path></g>
+      <g data-a="ic-carrot-proud" opacity="0" stroke="#2b1a12" stroke-width="2.8" fill="none" stroke-linecap="round">
+        <path d="M-19 1 Q-12 -3 -5 1"></path><path d="M5 1 Q12 -3 19 1"></path>
+        <path d="M-19 -9 L-6 -6" stroke-width="2.2"></path><path d="M19 -9 L6 -6" stroke-width="2.2"></path></g>
+      <g data-a="ic-carrot-mouth" fill="none" stroke="#2b1a12" stroke-width="2.7" stroke-linecap="round" stroke-linejoin="round">
+        <path data-m="smile" d="M-7.5 11 Q0 18.5 7.5 11"></path>
+        <path opacity="0" data-m="grin" d="M-9 10 Q0 22 9 10 Z" fill="#7a2323" stroke-width="2.2"></path>
+        <path opacity="0" data-m="sad" d="M-7.5 17 Q0 9.5 7.5 17"></path>
+        <g opacity="0" data-m="o" stroke="none"><ellipse cx="0" cy="15" rx="5.6" ry="7.2" fill="#6b1f1f"></ellipse><ellipse cx="0" cy="18.6" rx="3.4" ry="2.4" fill="#ff8f8f"></ellipse></g>
+        <g opacity="0" data-m="big" stroke="none"><path d="M-12.5 8 Q0 3 12.5 8 Q11 31 0 31 Q-11 31 -12.5 8Z" fill="#6b1f1f"></path><path d="M-7 25 Q0 19 7 25 Q4 30 0 30 Q-4 30 -7 25Z" fill="#ff8f8f"></path></g>
+        <path opacity="0" data-m="wavy" d="M-10 15 q2.5 -3.4 5 0 t5 0 t5 0 t5 0"></path>
+        <path opacity="0" data-m="flat" d="M-4.5 15 H4.5"></path>
+        <path opacity="0" data-m="smug" d="M-7 14 Q3 17 9 9"></path>
+      </g>
+      <g data-a="ic-carrot-tears" opacity="0"><path class="drip" style="--d:0s" d="M-13 7 q-3.8 6.4 0 10 q3.8 -3.6 0 -10z" fill="#6ccbff"></path><path class="drip" style="--d:0.42s" d="M-13 7 q-3.8 6.4 0 10 q3.8 -3.6 0 -10z" fill="#6ccbff"></path><path class="drip" style="--d:0.84s" d="M-13 7 q-3.8 6.4 0 10 q3.8 -3.6 0 -10z" fill="#6ccbff"></path><path class="drip" style="--d:0s" d="M13 7 q-3.8 6.4 0 10 q3.8 -3.6 0 -10z" fill="#6ccbff"></path><path class="drip" style="--d:0.42s" d="M13 7 q-3.8 6.4 0 10 q3.8 -3.6 0 -10z" fill="#6ccbff"></path><path class="drip" style="--d:0.84s" d="M13 7 q-3.8 6.4 0 10 q3.8 -3.6 0 -10z" fill="#6ccbff"></path></g>
+    </g>
+    </g></g></svg></i><span></span></div>
+      <div class="lyrics"><div class="lyrics__in">
+        <p class="stanza"><span class="line">הַיְּרָקוֹת בָּכוּ מָרָה</span><span class="line">זֶה קָרָה בִּקְעָרָה</span></p>
+        <p class="stanza"><span class="line">רִאשׁוֹן צָרַח הַגֶּזֶר</span><span class="line">"מִי יָבוֹא אֵלַי לְעֵזֶר"</span></p>
+        <p class="stanza"><span class="line">הִשְׁתַּנֵּק קוֹלוֹ שֶׁל כְּרוּב</span><span class="line">נַעֲשָׂה מְאוֹד עָלוּב</span></p>
+        <p class="stanza"><span class="line">הָעַגְבָנִיָּה הָאֲדֻמָּה</span><span class="line">נֶאֶלְמָה מֵרֹב אֵימָה</span></p>
+        <p class="stanza"><span class="line">וְהַפַּחְדָן, הַמְּלָפְפוֹן</span><span class="line">מִיָּד אִבֵּד אֶת הַצָּפוֹן</span></p>
+        <p class="stanza"><span class="line">הִתְחַכֵּם לוֹ הַבָּצָל</span><span class="line">"אֵין טַעַם שֶׁאֶהְיֶה כָּאן מְנֻצָּל!</span><span class="line">אֵינֶנִּי יָעִיל לְכָל הַדֵּעוֹת</span><span class="line">אֲנִי גּוֹרֵם רַק לִדְמָעוֹת"</span></p>
+        <p class="stanza"><span class="line">אַךְ אִמָּא קוֹבַעַת וְזֶה כְּבָר הֻחְלַט</span><span class="line">כָּל הַיְּרָקוֹת יַהַפְכוּ לְסָלָט!</span></p>
+      </div></div>
+    </article>
+    <div class="folio">1</div>
+  </section>
+
+  <section class="page song" id="eggplant" style="--top:160mm;--bg:#3a1452;--accent:#7b3aa6;--title:#ffe7a3;--sh:#7b3aa6;--sh2:#2a0c3c;--card:#fdf8ff">
+    <img class="art" src="frames/eggplant.jpg" alt="">
+    <article class="card">
+      <h2 class="card__title">הֶחָצִיל הָאָצִיל</h2>
+      <div class="card__rule"><span></span><i><svg viewBox="-140 -190 280 330" aria-hidden="true" focusable="false"><g transform="rotate(-8)"><g data-a="ic-egg">
+      <g data-a="ic-egg-legs" stroke="#3a0f5e" stroke-width="7" stroke-linecap="round" fill="none">
+        <path data-a="ic-egg-legL" d="M-24 104 L-28 140"></path><path data-a="ic-egg-legR" d="M24 104 L28 140"></path>
+        <ellipse cx="-34" cy="143" rx="15" ry="7" fill="#3a0f5e" stroke="none"></ellipse><ellipse cx="34" cy="143" rx="15" ry="7" fill="#3a0f5e" stroke="none"></ellipse>
+      </g>
+      <g data-a="ic-egg-armR"><path d="M58 -6 C 84 2 96 22 98 44" stroke="#4a1773" stroke-width="7" fill="none" stroke-linecap="round"></path><circle cx="98" cy="48" r="10" fill="#5b2088"></circle></g>
+      <g data-a="ic-egg-armL"><path d="M-58 -6 C -84 2 -96 22 -98 44" stroke="#4a1773" stroke-width="7" fill="none" stroke-linecap="round"></path><circle cx="-98" cy="48" r="10" fill="#5b2088"></circle></g>
+      <path d="M0 -110 C 40 -110 52 -60 62 -10 C 76 50 70 110 0 112 C -70 110 -76 50 -62 -10 C -52 -60 -40 -110 0 -110Z" fill="url(#gEggplant)"></path>
+      <path d="M-34 -70 C -48 -30 -54 20 -40 70" stroke="#e2c4ff" stroke-width="8" stroke-linecap="round" fill="none" opacity=".35"></path>
+      <ellipse cx="-30" cy="-56" rx="8" ry="16" fill="#fff" opacity=".4" transform="rotate(20 -30 -56)"></ellipse>
+      <path d="M-4 -112 C -6 -130 2 -144 12 -148" stroke="#3f8a35" stroke-width="9" stroke-linecap="round" fill="none"></path>
+      <path d="M-40 -96 C -26 -64 -10 -86 0 -68 C 10 -86 26 -64 40 -96 C 22 -120 -22 -120 -40 -96Z" fill="url(#gCalyx)"></path>
+      <g transform="translate(0 -26) scale(1.25)" data-a="ic-egg-face">
+      <ellipse cx="-23" cy="10" rx="7.5" ry="4.6" fill="#ff7f86" opacity=".5"></ellipse><ellipse cx="23" cy="10" rx="7.5" ry="4.6" fill="#ff7f86" opacity=".5"></ellipse>
+      <g data-a="ic-egg-eyes"><g class="blink" style="--d:-2.9s">
+        <ellipse cx="-14" cy="0" rx="5.6" ry="7.6" fill="#2b1a12"></ellipse>
+        <ellipse cx="14" cy="0" rx="5.6" ry="7.6" fill="#2b1a12"></ellipse>
+        <circle cx="-12" cy="-3.2" r="2.4" fill="#fff"></circle><circle cx="16" cy="-3.2" r="2.4" fill="#fff"></circle>
+        <circle cx="-15.6" cy="3.2" r="1.1" fill="#fff" opacity=".8"></circle><circle cx="12.4" cy="3.2" r="1.1" fill="#fff" opacity=".8"></circle>
+      </g></g>
+      <g data-a="ic-egg-dizzy" opacity="0" stroke="#2b1a12" stroke-width="2.2" fill="none" stroke-linecap="round"><path d="M-14 0 a1.6 1.6 0 1 1 3.2 0 a3.2 3.2 0 1 1 -6.4 0 a4.8 4.8 0 1 1 9.6 0 a6.2 6.2 0 1 1 -12.4 0"></path><path d="M14 0 a1.6 1.6 0 1 1 3.2 0 a3.2 3.2 0 1 1 -6.4 0 a4.8 4.8 0 1 1 9.6 0 a6.2 6.2 0 1 1 -12.4 0"></path></g>
+      <g data-a="ic-egg-proud" opacity="0" stroke="#2b1a12" stroke-width="2.8" fill="none" stroke-linecap="round">
+        <path d="M-21 1 Q-14 -3 -7 1"></path><path d="M7 1 Q14 -3 21 1"></path>
+        <path d="M-21 -9 L-8 -6" stroke-width="2.2"></path><path d="M21 -9 L8 -6" stroke-width="2.2"></path></g>
+      <g data-a="ic-egg-mouth" fill="none" stroke="#2b1a12" stroke-width="2.7" stroke-linecap="round" stroke-linejoin="round">
+        <path data-m="smile" d="M-7.5 11 Q0 18.5 7.5 11"></path>
+        <path opacity="0" data-m="grin" d="M-9 10 Q0 22 9 10 Z" fill="#7a2323" stroke-width="2.2"></path>
+        <path opacity="0" data-m="sad" d="M-7.5 17 Q0 9.5 7.5 17"></path>
+        <g opacity="0" data-m="o" stroke="none"><ellipse cx="0" cy="15" rx="5.6" ry="7.2" fill="#6b1f1f"></ellipse><ellipse cx="0" cy="18.6" rx="3.4" ry="2.4" fill="#ff8f8f"></ellipse></g>
+        <g opacity="0" data-m="big" stroke="none"><path d="M-12.5 8 Q0 3 12.5 8 Q11 31 0 31 Q-11 31 -12.5 8Z" fill="#6b1f1f"></path><path d="M-7 25 Q0 19 7 25 Q4 30 0 30 Q-4 30 -7 25Z" fill="#ff8f8f"></path></g>
+        <path opacity="0" data-m="wavy" d="M-10 15 q2.5 -3.4 5 0 t5 0 t5 0 t5 0"></path>
+        <path opacity="0" data-m="flat" d="M-4.5 15 H4.5"></path>
+        <path opacity="0" data-m="smug" d="M-7 14 Q3 17 9 9"></path>
+      </g>
+      <g data-a="ic-egg-tears" opacity="0"><path class="drip" style="--d:0s" d="M-15 7 q-3.8 6.4 0 10 q3.8 -3.6 0 -10z" fill="#6ccbff"></path><path class="drip" style="--d:0.42s" d="M-15 7 q-3.8 6.4 0 10 q3.8 -3.6 0 -10z" fill="#6ccbff"></path><path class="drip" style="--d:0.84s" d="M-15 7 q-3.8 6.4 0 10 q3.8 -3.6 0 -10z" fill="#6ccbff"></path><path class="drip" style="--d:0s" d="M15 7 q-3.8 6.4 0 10 q3.8 -3.6 0 -10z" fill="#6ccbff"></path><path class="drip" style="--d:0.42s" d="M15 7 q-3.8 6.4 0 10 q3.8 -3.6 0 -10z" fill="#6ccbff"></path><path class="drip" style="--d:0.84s" d="M15 7 q-3.8 6.4 0 10 q3.8 -3.6 0 -10z" fill="#6ccbff"></path></g>
+    </g>
+    </g><g transform="translate(0 -128)"><g data-a="ic-crown">
+      <path d="M-46 10 L-52 -32 L-28 -8 L-14 -44 L0 -12 L14 -44 L28 -8 L52 -32 L46 10Z" fill="url(#gGold)" stroke="#a8721a" stroke-width="2.4" stroke-linejoin="round"></path>
+      <circle cx="-52" cy="-34" r="6" fill="url(#gGold)" stroke="#a8721a" stroke-width="2"></circle><circle cx="52" cy="-34" r="6" fill="url(#gGold)" stroke="#a8721a" stroke-width="2"></circle>
+      <circle cx="-14" cy="-46" r="6" fill="url(#gGold)" stroke="#a8721a" stroke-width="2"></circle><circle cx="14" cy="-46" r="6" fill="url(#gGold)" stroke="#a8721a" stroke-width="2"></circle>
+      <rect x="-48" y="4" width="96" height="16" rx="5" fill="url(#gGold)" stroke="#a8721a" stroke-width="2.4"></rect>
+      <circle cx="-26" cy="12" r="5" fill="#e8344d"></circle><circle cx="0" cy="12" r="6" fill="#2d8ce0"></circle><circle cx="26" cy="12" r="5" fill="#2fb36a"></circle>
+      <path d="M-40 -2 L-36 -20" stroke="#fff" stroke-width="3" stroke-linecap="round" opacity=".6"></path>
+    </g></g></g></svg></i><span></span></div>
+      <div class="lyrics"><div class="lyrics__in">
+        <p class="stanza"><span class="line">"מִי טוֹב לֵב אוֹתִי יַצִּיל?"</span><span class="line">כָּךְ צָרַח לוֹ הֶחָצִיל</span></p>
+        <p class="stanza"><span class="line">עָנוּ לוֹ הַיְּרָקוֹת בַּלָּאט</span><span class="line">"גַּם מִמְּךָ יַעֲשׂוּ סָלָט"</span></p>
+        <p class="stanza"><span class="line">"מָה פִּתְאוֹם?" הִתְנַשֵּׂא הֶחָצִיל</span><span class="line">"הֲרֵי אֲנִי מְאוֹד אַצִּיל!"</span></p>
+        <p class="stanza"><span class="line">עָנוּ לוֹ הַיְּרָקוֹת. "שְׁשְׁשְׁשְׁשְׁ</span><span class="line">לֹא יַעֲזֹר לִבְכּוֹת!</span></p>
+        <p class="stanza"><span class="line">אִם תֵּלֵךְ הָדוּר. אוֹ תֵּלֵךְ בְּרִשּׁוּל</span><span class="line">סוֹפְךָ שֶׁתִּפֹּל לְסִיר הַבִּשּׁוּל"</span></p>
+      </div></div>
+    </article>
+    <div class="folio">2</div>
+  </section>
+
+  <section class="page song" id="kingfisher" style="--top:150mm;--bg:#cfeefc;--accent:#1f7fb6;--title:#ffffff;--sh:#1f7fb6;--sh2:#0c4a70;--card:#f7fdff">
+    <img class="art" src="frames/kingfisher.jpg" alt="">
+    <article class="card">
+      <h2 class="card__title">הַשַּׁלְדָּג</h2>
+      <div class="card__rule"><span></span><i><svg viewBox="-140 -120 240 230" aria-hidden="true" focusable="false"><g data-a="ic-kf">
+      <path d="M28 8 L80 30 L74 42 L24 22Z" fill="#126fb8"></path>
+      <path d="M30 10 L76 30" stroke="#4fd4f5" stroke-width="3" opacity=".6"></path>
+      <g data-a="ic-kf-feet" stroke="#e5482e" stroke-width="4" stroke-linecap="round"><path d="M-6 40 L-10 54 M6 40 L4 54"></path></g>
+      <path d="M-22 -32 C 10 -42 42 -20 42 10 C 42 36 12 46 -14 42 C -42 36 -48 -22 -22 -32Z" fill="url(#gKfBlue)"></path>
+      <path d="M-38 -2 C -36 30 -10 46 15 42 C 32 38 40 24 38 14 C 10 22 -16 16 -38 -2Z" fill="url(#gKfOrange)"></path>
+      <g data-a="ic-kf-wingFold"><path d="M-12 -28 C 20 -38 50 -12 46 18 C 30 26 2 12 -12 -28Z" fill="#1678c0"></path><circle cx="31.2" cy="-15" r="1.6" fill="#bff0ff" opacity=".85"></circle><circle cx="13.8" cy="-11.3" r="2.7" fill="#bff0ff" opacity=".85"></circle><circle cx="-1.7" cy="-18.4" r="2.3" fill="#bff0ff" opacity=".85"></circle><circle cx="18" cy="-7" r="2.2" fill="#bff0ff" opacity=".85"></circle><circle cx="-0.4" cy="0.3" r="2.6" fill="#bff0ff" opacity=".85"></circle><circle cx="18.2" cy="1.3" r="2.5" fill="#bff0ff" opacity=".85"></circle><circle cx="7.2" cy="-1.4" r="2.6" fill="#bff0ff" opacity=".85"></circle><circle cx="5.1" cy="-5.7" r="2.7" fill="#bff0ff" opacity=".85"></circle><circle cx="17.3" cy="-14.7" r="2.4" fill="#bff0ff" opacity=".85"></circle>
+        <path d="M0 -6 C 14 4 30 10 44 12" stroke="#0d5c99" stroke-width="2" fill="none" opacity=".7"></path></g>
+      <g data-a="ic-kf-wingFly" opacity="0">
+        <g class="flap" style="--o:10% 100%;--a1:-34deg;--a2:30deg"><path d="M-4 -18 C -14 -78 26 -112 64 -104 C 42 -76 30 -44 12 -12Z" fill="url(#gKfBlue)"></path>
+          <path d="M8 -30 C 14 -60 34 -84 54 -96" stroke="#bff0ff" stroke-width="3" fill="none" opacity=".6"></path></g>
+      </g>
+      <g data-a="ic-kf-head">
+        <circle cx="-34" cy="-36" r="27" fill="url(#gKfBlue)"></circle>
+        <path d="M-60 -30 C -54 -14 -34 -10 -16 -18 C -22 -30 -42 -34 -60 -30Z" fill="url(#gKfOrange)"></path>
+        <path d="M-56 -18 C -50 -6 -38 -4 -28 -8 C -36 -14 -48 -16 -56 -18Z" fill="#fff"></path>
+        <path d="M-30 -18 C -20 -14 -10 -16 -2 -22 C -10 -26 -20 -24 -30 -18Z" fill="#fff" opacity=".9"></path>
+        <g class="blink" style="--d:-2s"><circle cx="-42" cy="-40" r="7.5" fill="#2b1a12"></circle><circle cx="-39.5" cy="-43" r="2.8" fill="#fff"></circle></g>
+        <path d="M-58 -42 L-124 -31 L-58 -28Z" fill="#2a2a33"></path>
+        <path d="M-60 -40 L-118 -32" stroke="#5a5a68" stroke-width="2"></path>
+        <g data-a="ic-kf-fish" opacity="0" transform="translate(-112 -26) rotate(-8)"><g class="wiggle" style="--o:30% 20%"><g transform="scale(0.75)">
+      <g class="tail" style="--o:0% 50%"><path d="M26 0 L46 -14 L42 0 L46 14Z" fill="url(#gFish2)"></path></g>
+      <ellipse cx="0" cy="0" rx="30" ry="14" fill="url(#gFish2)"></ellipse>
+      <path d="M-4 -12 Q6 -22 14 -12" fill="url(#gFish2)" opacity=".9"></path>
+      <path d="M8 -10 Q2 0 8 10" stroke="#fff" stroke-width="2" fill="none" opacity=".5"></path>
+      <circle cx="-16" cy="-3" r="3.6" fill="#2b1a12"></circle><circle cx="-15" cy="-4.2" r="1.3" fill="#fff"></circle>
+      <path d="M-28 2 q3 2 6 0" stroke="#2b1a12" stroke-width="1.5" fill="none"></path>
+    </g></g></g>
+      </g>
+    </g></svg></i><span></span></div>
+      <div class="lyrics"><div class="lyrics__in">
+        <p class="stanza"><span class="line">מֵעַל שְׂפַת הַנַּחַל רָאִיתִי צִפּוֹר</span><span class="line">כָּחֹל הוּא צִבְעָהּ וְאָרֹךְ הַמָּקוֹר</span></p>
+        <p class="stanza"><span class="line">מֵעַל פְּנֵי הַנַּחַל חַג לוֹ וְחַג.</span><span class="line">מִיָּד הֵבַנְתִּי שֶׁזֶּהוּ שַׁלְדָּג</span></p>
+        <p class="stanza"><span class="line">מְאוֹד מְסַקְרֵן אֵיךְ הוּא דָּג לוֹ דָּגִים</span><span class="line">לְפֶתַע צָלַל וְהֵחֵל לְהַדְגִּים</span></p>
+        <p class="stanza"><span class="line">לַיְּלָדִים בְּגַן רַצְתִּי לְסַפֵּר</span><span class="line">אַךְ הוּא צוֹלֵל וּמַמְרִיא</span><span class="line">וְהַדָּג בִּמְקוֹרוֹ מְפַרְפֵּר</span></p>
+      </div></div>
+    </article>
+    <div class="folio">3</div>
+  </section>
+
+  <section class="page song" id="noblebird" style="--top:156mm;--bg:#ffd7b0;--accent:#b4532a;--title:#fff6e8;--sh:#c25a2e;--sh2:#6e2a10;--card:#fffaf3">
+    <img class="art" src="frames/noblebird.jpg" alt="">
+    <article class="card">
+      <h2 class="card__title">צִפּוֹר אֲצִילָה</h2>
+      <div class="card__rule"><span></span><i><svg viewBox="-110 -110 200 200" aria-hidden="true" focusable="false"><g data-a="ic-mom">
+      <path d="M34 0 L74 -8 L70 8 L36 14Z" fill="#7e4a2a"></path>
+      <g data-a="ic-mom-feet" stroke="#e8902c" stroke-width="4" stroke-linecap="round"><path d="M-6 40 L-8 54 M8 40 L8 54"></path></g>
+      <ellipse cx="0" cy="4" rx="44" ry="40" fill="url(#gBirdBack)"></ellipse>
+      <path d="M-40 -6 C -42 30 -14 46 10 44 C 26 42 34 30 30 18 C 12 24 -20 14 -40 -6Z" fill="#fffdf8"></path>
+      <path d="M-36 -10 C -40 22 -18 38 4 40" stroke="#e8e0d4" stroke-width="3" fill="none" opacity=".8"></path>
+      <g data-a="ic-mom-wingFold"><path d="M-6 -10 C 22 -20 46 0 40 26 C 22 30 2 18 -6 -10Z" fill="#9a5d36"></path>
+        <path d="M6 4 q12 6 28 8 M10 14 q10 4 22 6" stroke="#6e3c1e" stroke-width="2" fill="none"></path></g>
+      <g data-a="ic-mom-wingFly" opacity="0"><g class="flap" style="--o:0% 100%;--a1:-30deg;--a2:28deg">
+        <path d="M-2 -10 C -10 -64 30 -96 70 -90 C 48 -64 36 -36 14 -4Z" fill="#9a5d36"></path>
+        <path d="M14 -22 C 22 -48 40 -70 60 -82" stroke="#6e3c1e" stroke-width="2.4" fill="none"></path></g></g>
+      <g data-a="ic-mom-head">
+        <circle cx="-30" cy="-28" r="26" fill="url(#gBirdBack)"></circle>
+        <path d="M-50 -16 C -44 -4 -28 0 -14 -6 C -22 -14 -38 -18 -50 -16Z" fill="#fffdf8"></path>
+        <g class="blink" style="--d:-1.4s"><circle cx="-38" cy="-32" r="7" fill="#2b1a12"></circle><circle cx="-35.6" cy="-35" r="2.6" fill="#fff"></circle></g>
+        <ellipse cx="-34" cy="-18" rx="6" ry="3.5" fill="#ff8f8f" opacity=".55"></ellipse>
+        <g data-a="ic-mom-beak"><path d="M-54 -30 L-74 -24 L-54 -20Z" fill="#f4a42c"></path></g>
+        <g data-a="ic-mom-beakOpen" opacity="0"><path d="M-54 -32 L-76 -34 L-54 -25Z" fill="#f4a42c"></path><path d="M-54 -24 L-74 -16 L-54 -19Z" fill="#e08a1a"></path></g>
+      </g>
+      <g data-a="ic-mom-medal" opacity="0" transform="translate(-6 26)">
+        <path d="M-10 -22 L-4 -4 L4 -4 L10 -22Z" fill="#2d8ce0"></path><path d="M-6 -22 L0 -6 L6 -22" fill="#e8344d"></path>
+        <circle cx="0" cy="4" r="10" fill="url(#gGold)" stroke="#a8721a" stroke-width="2"></circle>
+        <path d="M0 -1 l1.8 3.6 4 .5 -2.9 2.8 .7 4 -3.6 -1.9 -3.6 1.9 .7 -4 -2.9 -2.8 4 -.5z" fill="#fff6c8"></path></g>
+    </g></svg></i><span></span></div>
+      <div class="lyrics"><div class="lyrics__in">
+        <p class="stanza"><span class="line">חָתוּל אֶחָד טִפֵּס עַל עֵץ</span><span class="line">כְּשֶׁשָּׁמַע לְפֶתַע, גּוֹזֵל מְצַיֵּץ</span></p>
+        <p class="stanza"><span class="line">וְאִמָּא צִפּוֹר לִבְנַת הֶחָזֶה.</span><span class="line">הֶעֱנִיקָה לִי רֶגַע. שֶׁל מַחֲזֶה</span></p>
+        <p class="stanza"><span class="line">צָרְחָה וְצִיְּצָה אִמָּא צִפּוֹר</span><span class="line">וּבְגַבּוֹ שֶׁל הֶחָתוּל נָעֲצָה אֶת הַמָּקוֹר</span></p>
+        <p class="stanza"><span class="line">מֵרֹאשׁ הָעֵץ נָפַל הֶחָתוּל וְנֶחְבַּל</span><span class="line">מְיָאוּ בָּכָה. כַּמָּה חֲבָל</span></p>
+        <p class="stanza"><span class="line">הִפְסַדְתִּי אֲרוּחָה. הִפְסַדְתִּי גּוֹזֵל.</span><span class="line">אָכֵן זֹאת דֻּגְמָה שֶׁל חֹסֶר מַזָּל</span></p>
+        <p class="stanza"><span class="line">אִמָּא צִפּוֹר כָּל כָּךְ אֲצִילָה.</span><span class="line">בְּחֵרוּף נֶפֶשׁ אֶת גּוֹזָלָהּ הִצִּילָה.</span></p>
+      </div></div>
+    </article>
+    <div class="folio">4</div>
+  </section>
+
+  <section class="page song" id="tooth" style="--top:148mm;--bg:#e7f3ff;--accent:#3f7fc4;--title:#ffffff;--sh:#5d9be0;--sh2:#2b5f9e;--card:#fbfdff">
+    <img class="art" src="frames/tooth.jpg" alt="">
+    <article class="card">
+      <h2 class="card__title">שֵׁן חָלָב</h2>
+      <div class="card__rule"><span></span><i><svg viewBox="-80 -100 160 190" aria-hidden="true" focusable="false"><g data-a="ic-tooth">
+      <path d="M-42 -52 C -42 -74 -16 -76 0 -62 C 16 -76 42 -74 42 -52 C 46 -20 38 10 32 32 C 27 52 21 72 12 72 C 4 72 4 42 0 42 C -4 42 -4 72 -12 72 C -21 72 -27 52 -32 32 C -38 10 -46 -20 -42 -52Z" fill="url(#gTooth)" stroke="#bccbdb" stroke-width="3"></path>
+      <path d="M-28 -56 C -34 -36 -32 -10 -24 10" stroke="#fff" stroke-width="8" stroke-linecap="round" fill="none" opacity=".9"></path>
+      <g transform="translate(0 -18) scale(1.05)" data-a="ic-tooth-face">
+      <ellipse cx="-24" cy="10" rx="7.5" ry="4.6" fill="#ff7f86" opacity=".5"></ellipse><ellipse cx="24" cy="10" rx="7.5" ry="4.6" fill="#ff7f86" opacity=".5"></ellipse>
+      <g data-a="ic-tooth-eyes"><g class="blink" style="--d:-2.4s">
+        <ellipse cx="-15" cy="0" rx="5.6" ry="7.6" fill="#2b1a12"></ellipse>
+        <ellipse cx="15" cy="0" rx="5.6" ry="7.6" fill="#2b1a12"></ellipse>
+        <circle cx="-13" cy="-3.2" r="2.4" fill="#fff"></circle><circle cx="17" cy="-3.2" r="2.4" fill="#fff"></circle>
+        <circle cx="-16.6" cy="3.2" r="1.1" fill="#fff" opacity=".8"></circle><circle cx="13.4" cy="3.2" r="1.1" fill="#fff" opacity=".8"></circle>
+      </g></g>
+      <g data-a="ic-tooth-dizzy" opacity="0" stroke="#2b1a12" stroke-width="2.2" fill="none" stroke-linecap="round"><path d="M-15 0 a1.6 1.6 0 1 1 3.2 0 a3.2 3.2 0 1 1 -6.4 0 a4.8 4.8 0 1 1 9.6 0 a6.2 6.2 0 1 1 -12.4 0"></path><path d="M15 0 a1.6 1.6 0 1 1 3.2 0 a3.2 3.2 0 1 1 -6.4 0 a4.8 4.8 0 1 1 9.6 0 a6.2 6.2 0 1 1 -12.4 0"></path></g>
+      <g data-a="ic-tooth-proud" opacity="0" stroke="#2b1a12" stroke-width="2.8" fill="none" stroke-linecap="round">
+        <path d="M-22 1 Q-15 -3 -8 1"></path><path d="M8 1 Q15 -3 22 1"></path>
+        <path d="M-22 -9 L-9 -6" stroke-width="2.2"></path><path d="M22 -9 L9 -6" stroke-width="2.2"></path></g>
+      <g data-a="ic-tooth-mouth" fill="none" stroke="#2b1a12" stroke-width="2.7" stroke-linecap="round" stroke-linejoin="round">
+        <path data-m="smile" d="M-7.5 11 Q0 18.5 7.5 11"></path>
+        <path opacity="0" data-m="grin" d="M-9 10 Q0 22 9 10 Z" fill="#7a2323" stroke-width="2.2"></path>
+        <path opacity="0" data-m="sad" d="M-7.5 17 Q0 9.5 7.5 17"></path>
+        <g opacity="0" data-m="o" stroke="none"><ellipse cx="0" cy="15" rx="5.6" ry="7.2" fill="#6b1f1f"></ellipse><ellipse cx="0" cy="18.6" rx="3.4" ry="2.4" fill="#ff8f8f"></ellipse></g>
+        <g opacity="0" data-m="big" stroke="none"><path d="M-12.5 8 Q0 3 12.5 8 Q11 31 0 31 Q-11 31 -12.5 8Z" fill="#6b1f1f"></path><path d="M-7 25 Q0 19 7 25 Q4 30 0 30 Q-4 30 -7 25Z" fill="#ff8f8f"></path></g>
+        <path opacity="0" data-m="wavy" d="M-10 15 q2.5 -3.4 5 0 t5 0 t5 0 t5 0"></path>
+        <path opacity="0" data-m="flat" d="M-4.5 15 H4.5"></path>
+        <path opacity="0" data-m="smug" d="M-7 14 Q3 17 9 9"></path>
+      </g>
+      <g data-a="ic-tooth-tears" opacity="0"><path class="drip" style="--d:0s" d="M-16 7 q-3.8 6.4 0 10 q3.8 -3.6 0 -10z" fill="#6ccbff"></path><path class="drip" style="--d:0.42s" d="M-16 7 q-3.8 6.4 0 10 q3.8 -3.6 0 -10z" fill="#6ccbff"></path><path class="drip" style="--d:0.84s" d="M-16 7 q-3.8 6.4 0 10 q3.8 -3.6 0 -10z" fill="#6ccbff"></path><path class="drip" style="--d:0s" d="M16 7 q-3.8 6.4 0 10 q3.8 -3.6 0 -10z" fill="#6ccbff"></path><path class="drip" style="--d:0.42s" d="M16 7 q-3.8 6.4 0 10 q3.8 -3.6 0 -10z" fill="#6ccbff"></path><path class="drip" style="--d:0.84s" d="M16 7 q-3.8 6.4 0 10 q3.8 -3.6 0 -10z" fill="#6ccbff"></path></g>
+    </g>
+    </g></svg></i><span></span></div>
+      <div class="lyrics"><div class="lyrics__in">
+        <p class="stanza"><span class="line">שֵׁן חָלָב צָמְחָה הַיּוֹם לַאֲחוֹתִי שָׁנִי</span><span class="line">אִמָּא אָמְרָה שֶׁכָּךְ הָיִיתִי גַּם אֲנִי</span></p>
+        <p class="stanza"><span class="line">לְכָל תִּינוֹק, הִסְבִּירָה אִמָּא,</span><span class="line">שִׁנֵּי חָלָב צוֹמְחוֹת</span><span class="line">וּבְהֶמְשֵׁךְ הַדֶּרֶךְ הֵן נוֹשְׁרוֹת.</span></p>
+        <p class="stanza"><span class="line">"אִמָּא", שָׁאַלְתִּי, "לָמָּה צוֹמְחוֹת שִׁנֵּי חָלָב?"</span><span class="line">אִמָּא הִסְבִּירָה שֶׁזֶּה פָּשׁוּט שָׁלָב</span></p>
+        <p class="stanza"><span class="line">שֵׁן צוֹמַחַת, שֵׁן נוֹשֶׁרֶת</span><span class="line">וּבִמְקוֹמָהּ תִּצְמַח אַחֶרֶת..</span><span class="line">שֵׁן בְּרִיאָה, שֵׁן לְתִפְאֶרֶת.</span></p>
+      </div></div>
+    </article>
+    <div class="folio">5</div>
+  </section>
+
+  <section class="page song" id="rabbit" style="--top:160mm;--bg:#1d1030;--accent:#b0263a;--title:#ffe7a3;--sh:#b0263a;--sh2:#4f0b16;--card:#fffaf2">
+    <img class="art" src="frames/rabbit.jpg" alt="">
+    <article class="card">
+      <h2 class="card__title">הָאַרְנָב</h2>
+      <div class="card__rule"><span></span><i><svg viewBox="-175 -205 350 350" aria-hidden="true" focusable="false"><g transform="translate(0 10) scale(.82)"><g data-a="ic-rab">
+      <circle cx="58" cy="96" r="20" fill="#fff"></circle>
+      <ellipse cx="0" cy="80" rx="64" ry="72" fill="url(#gRabbit)"></ellipse>
+      <ellipse cx="0" cy="96" rx="38" ry="48" fill="#fff"></ellipse>
+      <ellipse cx="-36" cy="152" rx="30" ry="14" fill="#f4f0f6" stroke="#d8cfe2" stroke-width="2"></ellipse><ellipse cx="36" cy="152" rx="30" ry="14" fill="#f4f0f6" stroke="#d8cfe2" stroke-width="2"></ellipse>
+      <g data-a="ic-rab-collar" opacity="0"><path d="M-36 14 Q0 32 36 14" stroke="#e8344d" stroke-width="9" fill="none" stroke-linecap="round"></path>
+        <path d="M0 30 c-8 -10 -20 0 -10 10 l10 9 10 -9 c10 -10 -2 -20 -10 -10z" fill="url(#gGold)" stroke="#a8721a" stroke-width="1.6"></path></g>
+      <g data-a="ic-rab-ears">
+        <g class="ears" style="--d:-1s"><path d="M-30 -60 C -50 -120 -44 -190 -22 -196 C -2 -190 -2 -120 -12 -62Z" fill="url(#gRabbit)" stroke="#d8cfe2" stroke-width="2"></path>
+          <path d="M-26 -72 C -38 -120 -34 -170 -22 -178 C -12 -170 -12 -120 -16 -74Z" fill="#ffb8c8"></path></g>
+        <g class="ears" style="--d:-3.2s"><path d="M30 -60 C 50 -120 44 -190 22 -196 C 2 -190 2 -120 12 -62Z" fill="url(#gRabbit)" stroke="#d8cfe2" stroke-width="2"></path>
+          <path d="M26 -72 C 38 -120 34 -170 22 -178 C 12 -170 12 -120 16 -74Z" fill="#ffb8c8"></path></g>
+      </g>
+      <ellipse cx="0" cy="-26" rx="62" ry="54" fill="url(#gRabbit)"></ellipse>
+      <ellipse cx="-34" cy="-10" rx="11" ry="6.5" fill="#ff8fa6" opacity=".55"></ellipse><ellipse cx="34" cy="-10" rx="11" ry="6.5" fill="#ff8fa6" opacity=".55"></ellipse>
+      <g data-a="ic-rab-eyes"><g class="blink" style="--d:-2.2s">
+        <ellipse cx="-22" cy="-34" rx="8.5" ry="11" fill="#2b1a12"></ellipse><ellipse cx="22" cy="-34" rx="8.5" ry="11" fill="#2b1a12"></ellipse>
+        <circle cx="-19" cy="-38" r="3.4" fill="#fff"></circle><circle cx="25" cy="-38" r="3.4" fill="#fff"></circle><circle cx="-24" cy="-29" r="1.5" fill="#fff"></circle><circle cx="20" cy="-29" r="1.5" fill="#fff"></circle></g></g>
+      <g data-a="ic-rab-happy" opacity="0" stroke="#2b1a12" stroke-width="3.4" fill="none" stroke-linecap="round"><path d="M-30 -32 Q-22 -42 -14 -32 M14 -32 Q22 -42 30 -32"></path></g>
+      <g class="nose"><path d="M-7 -16 h14 l-7 7z" fill="#ff7f99"></path></g>
+      <path d="M0 -9 v6 M0 -3 q-6 6 -12 2 M0 -3 q6 6 12 2" stroke="#2b1a12" stroke-width="2.3" fill="none" stroke-linecap="round"></path>
+      <g data-a="ic-rab-teeth"><rect x="-8" y="0" width="7.6" height="13" rx="2" fill="#fff" stroke="#c9c0d6" stroke-width="1.6"></rect><rect x="0.4" y="0" width="7.6" height="13" rx="2" fill="#fff" stroke="#c9c0d6" stroke-width="1.6"></rect></g>
+      <g data-a="ic-rab-chew" opacity="0"><ellipse cx="0" cy="4" rx="9" ry="6" fill="#6b1f1f"></ellipse><rect x="-6" y="-1" width="5.6" height="7" rx="1.5" fill="#fff"></rect><rect x="0.4" y="-1" width="5.6" height="7" rx="1.5" fill="#fff"></rect></g>
+      <g stroke="#a99bb8" stroke-width="1.6" opacity=".8"><path d="M-30 -10 h-34 M-30 -4 l-32 8 M30 -10 h34 M30 -4 l32 8"></path></g>
+    </g></g></svg></i><span></span></div>
+      <div class="lyrics"><div class="lyrics__in">
+        <p class="stanza"><span class="line">יְדִידֵנוּ הָאַרְנָב</span><span class="line">כֻּלָּם יוֹדְעִים שֶׁהוּא חַיַּת מַחְמָד</span></p>
+        <p class="stanza"><span class="line">בְּנוֹסָף הוּא גַּם קוֹסֵם</span><span class="line">אֶת הַגֶּזֶר מְכַרְסֵם</span></p>
+        <p class="stanza"><span class="line">חַיָּבִים גַּם לְהוֹדוֹת</span><span class="line">כִּי שִׁנָּיו מְאוֹד חַדּוֹת</span></p>
+        <p class="stanza"><span class="line">בֵּין כִּרְסוּם לְבֵין אממ אָאמ אממ</span><span class="line">וְהוֹפּ! הַגֶּזֶר נֶעֱלַם.</span></p>
+      </div></div>
+    </article>
+    <div class="folio">6</div>
+  </section>
+  <section class="page back" id="back" style="--bg:#1d1030">
+    <img class="art" src="frames/back.jpg" alt="">
+    <div class="back__panel">
+      <p class="back__by">מאת: חיים אביטן</p>
+      <p class="back__sub">שִׁירֵי יְלָדִים</p>
+      <ol class="toc">
+        <li><span class="ic"><svg viewBox="-150 -130 300 300" aria-hidden="true" focusable="false"><g transform="rotate(28) translate(0 -40) scale(.95)"><g data-a="ic-carrot">
+      <g class="sway" style="--d:-3s">
+        <path d="M0 6 C -10 -26 -40 -44 -38 -76 C -18 -60 -6 -38 0 6Z" fill="url(#gLeaf)"></path>
+        <path d="M0 6 C -9 -38 -2 -78 6 -102 C 16 -70 9 -32 0 6Z" fill="#62b847"></path>
+        <path d="M0 6 C 12 -28 40 -44 46 -72 C 26 -58 10 -34 0 6Z" fill="url(#gLeaf2)"></path>
+        <path d="M2 2 C 2 -30 4 -60 6 -94" stroke="#3d8a30" stroke-width="2" fill="none" opacity=".6"></path>
+      </g>
+      <path d="M-29 8 C-31 -6 31 -6 29 8 C 25 82 11 170 3 228 C 1 235 -2 235 -3 228 C -13 170 -25 82 -29 8 Z" fill="url(#gCarrot)"></path>
+      <g stroke="#c4520e" stroke-width="2.6" stroke-linecap="round" fill="none" opacity=".75">
+        <path d="M-22 78 q8 5 15 2"></path><path d="M10 112 q8 3 12 -2"></path><path d="M-16 150 q6 4 11 1"></path><path d="M5 188 q5 2 8 -2"></path></g>
+      <path d="M-17 24 C -20 70 -12 130 -4 190" stroke="#fff" stroke-width="6" stroke-linecap="round" fill="none" opacity=".28"></path>
+      <g transform="translate(0 46) scale(0.95)" data-a="ic-carrot-face">
+      <ellipse cx="-21" cy="10" rx="7.5" ry="4.6" fill="#ff7f86" opacity=".5"></ellipse><ellipse cx="21" cy="10" rx="7.5" ry="4.6" fill="#ff7f86" opacity=".5"></ellipse>
+      <g data-a="ic-carrot-eyes"><g class="blink" style="--d:-0.5s">
+        <ellipse cx="-12" cy="0" rx="5.6" ry="7.6" fill="#2b1a12"></ellipse>
+        <ellipse cx="12" cy="0" rx="5.6" ry="7.6" fill="#2b1a12"></ellipse>
+        <circle cx="-10" cy="-3.2" r="2.4" fill="#fff"></circle><circle cx="14" cy="-3.2" r="2.4" fill="#fff"></circle>
+        <circle cx="-13.6" cy="3.2" r="1.1" fill="#fff" opacity=".8"></circle><circle cx="10.4" cy="3.2" r="1.1" fill="#fff" opacity=".8"></circle>
+      </g></g>
+      <g data-a="ic-carrot-dizzy" opacity="0" stroke="#2b1a12" stroke-width="2.2" fill="none" stroke-linecap="round"><path d="M-12 0 a1.6 1.6 0 1 1 3.2 0 a3.2 3.2 0 1 1 -6.4 0 a4.8 4.8 0 1 1 9.6 0 a6.2 6.2 0 1 1 -12.4 0"></path><path d="M12 0 a1.6 1.6 0 1 1 3.2 0 a3.2 3.2 0 1 1 -6.4 0 a4.8 4.8 0 1 1 9.6 0 a6.2 6.2 0 1 1 -12.4 0"></path></g>
+      <g data-a="ic-carrot-proud" opacity="0" stroke="#2b1a12" stroke-width="2.8" fill="none" stroke-linecap="round">
+        <path d="M-19 1 Q-12 -3 -5 1"></path><path d="M5 1 Q12 -3 19 1"></path>
+        <path d="M-19 -9 L-6 -6" stroke-width="2.2"></path><path d="M19 -9 L6 -6" stroke-width="2.2"></path></g>
+      <g data-a="ic-carrot-mouth" fill="none" stroke="#2b1a12" stroke-width="2.7" stroke-linecap="round" stroke-linejoin="round">
+        <path data-m="smile" d="M-7.5 11 Q0 18.5 7.5 11"></path>
+        <path opacity="0" data-m="grin" d="M-9 10 Q0 22 9 10 Z" fill="#7a2323" stroke-width="2.2"></path>
+        <path opacity="0" data-m="sad" d="M-7.5 17 Q0 9.5 7.5 17"></path>
+        <g opacity="0" data-m="o" stroke="none"><ellipse cx="0" cy="15" rx="5.6" ry="7.2" fill="#6b1f1f"></ellipse><ellipse cx="0" cy="18.6" rx="3.4" ry="2.4" fill="#ff8f8f"></ellipse></g>
+        <g opacity="0" data-m="big" stroke="none"><path d="M-12.5 8 Q0 3 12.5 8 Q11 31 0 31 Q-11 31 -12.5 8Z" fill="#6b1f1f"></path><path d="M-7 25 Q0 19 7 25 Q4 30 0 30 Q-4 30 -7 25Z" fill="#ff8f8f"></path></g>
+        <path opacity="0" data-m="wavy" d="M-10 15 q2.5 -3.4 5 0 t5 0 t5 0 t5 0"></path>
+        <path opacity="0" data-m="flat" d="M-4.5 15 H4.5"></path>
+        <path opacity="0" data-m="smug" d="M-7 14 Q3 17 9 9"></path>
+      </g>
+      <g data-a="ic-carrot-tears" opacity="0"><path class="drip" style="--d:0s" d="M-13 7 q-3.8 6.4 0 10 q3.8 -3.6 0 -10z" fill="#6ccbff"></path><path class="drip" style="--d:0.42s" d="M-13 7 q-3.8 6.4 0 10 q3.8 -3.6 0 -10z" fill="#6ccbff"></path><path class="drip" style="--d:0.84s" d="M-13 7 q-3.8 6.4 0 10 q3.8 -3.6 0 -10z" fill="#6ccbff"></path><path class="drip" style="--d:0s" d="M13 7 q-3.8 6.4 0 10 q3.8 -3.6 0 -10z" fill="#6ccbff"></path><path class="drip" style="--d:0.42s" d="M13 7 q-3.8 6.4 0 10 q3.8 -3.6 0 -10z" fill="#6ccbff"></path><path class="drip" style="--d:0.84s" d="M13 7 q-3.8 6.4 0 10 q3.8 -3.6 0 -10z" fill="#6ccbff"></path></g>
+    </g>
+    </g></g></svg></span><span class="nm">סָלַט יְרָקוֹת</span><span class="pg">1</span></li>
+        <li><span class="ic"><svg viewBox="-140 -190 280 330" aria-hidden="true" focusable="false"><g transform="rotate(-8)"><g data-a="ic-egg">
+      <g data-a="ic-egg-legs" stroke="#3a0f5e" stroke-width="7" stroke-linecap="round" fill="none">
+        <path data-a="ic-egg-legL" d="M-24 104 L-28 140"></path><path data-a="ic-egg-legR" d="M24 104 L28 140"></path>
+        <ellipse cx="-34" cy="143" rx="15" ry="7" fill="#3a0f5e" stroke="none"></ellipse><ellipse cx="34" cy="143" rx="15" ry="7" fill="#3a0f5e" stroke="none"></ellipse>
+      </g>
+      <g data-a="ic-egg-armR"><path d="M58 -6 C 84 2 96 22 98 44" stroke="#4a1773" stroke-width="7" fill="none" stroke-linecap="round"></path><circle cx="98" cy="48" r="10" fill="#5b2088"></circle></g>
+      <g data-a="ic-egg-armL"><path d="M-58 -6 C -84 2 -96 22 -98 44" stroke="#4a1773" stroke-width="7" fill="none" stroke-linecap="round"></path><circle cx="-98" cy="48" r="10" fill="#5b2088"></circle></g>
+      <path d="M0 -110 C 40 -110 52 -60 62 -10 C 76 50 70 110 0 112 C -70 110 -76 50 -62 -10 C -52 -60 -40 -110 0 -110Z" fill="url(#gEggplant)"></path>
+      <path d="M-34 -70 C -48 -30 -54 20 -40 70" stroke="#e2c4ff" stroke-width="8" stroke-linecap="round" fill="none" opacity=".35"></path>
+      <ellipse cx="-30" cy="-56" rx="8" ry="16" fill="#fff" opacity=".4" transform="rotate(20 -30 -56)"></ellipse>
+      <path d="M-4 -112 C -6 -130 2 -144 12 -148" stroke="#3f8a35" stroke-width="9" stroke-linecap="round" fill="none"></path>
+      <path d="M-40 -96 C -26 -64 -10 -86 0 -68 C 10 -86 26 -64 40 -96 C 22 -120 -22 -120 -40 -96Z" fill="url(#gCalyx)"></path>
+      <g transform="translate(0 -26) scale(1.25)" data-a="ic-egg-face">
+      <ellipse cx="-23" cy="10" rx="7.5" ry="4.6" fill="#ff7f86" opacity=".5"></ellipse><ellipse cx="23" cy="10" rx="7.5" ry="4.6" fill="#ff7f86" opacity=".5"></ellipse>
+      <g data-a="ic-egg-eyes"><g class="blink" style="--d:-2.9s">
+        <ellipse cx="-14" cy="0" rx="5.6" ry="7.6" fill="#2b1a12"></ellipse>
+        <ellipse cx="14" cy="0" rx="5.6" ry="7.6" fill="#2b1a12"></ellipse>
+        <circle cx="-12" cy="-3.2" r="2.4" fill="#fff"></circle><circle cx="16" cy="-3.2" r="2.4" fill="#fff"></circle>
+        <circle cx="-15.6" cy="3.2" r="1.1" fill="#fff" opacity=".8"></circle><circle cx="12.4" cy="3.2" r="1.1" fill="#fff" opacity=".8"></circle>
+      </g></g>
+      <g data-a="ic-egg-dizzy" opacity="0" stroke="#2b1a12" stroke-width="2.2" fill="none" stroke-linecap="round"><path d="M-14 0 a1.6 1.6 0 1 1 3.2 0 a3.2 3.2 0 1 1 -6.4 0 a4.8 4.8 0 1 1 9.6 0 a6.2 6.2 0 1 1 -12.4 0"></path><path d="M14 0 a1.6 1.6 0 1 1 3.2 0 a3.2 3.2 0 1 1 -6.4 0 a4.8 4.8 0 1 1 9.6 0 a6.2 6.2 0 1 1 -12.4 0"></path></g>
+      <g data-a="ic-egg-proud" opacity="0" stroke="#2b1a12" stroke-width="2.8" fill="none" stroke-linecap="round">
+        <path d="M-21 1 Q-14 -3 -7 1"></path><path d="M7 1 Q14 -3 21 1"></path>
+        <path d="M-21 -9 L-8 -6" stroke-width="2.2"></path><path d="M21 -9 L8 -6" stroke-width="2.2"></path></g>
+      <g data-a="ic-egg-mouth" fill="none" stroke="#2b1a12" stroke-width="2.7" stroke-linecap="round" stroke-linejoin="round">
+        <path data-m="smile" d="M-7.5 11 Q0 18.5 7.5 11"></path>
+        <path opacity="0" data-m="grin" d="M-9 10 Q0 22 9 10 Z" fill="#7a2323" stroke-width="2.2"></path>
+        <path opacity="0" data-m="sad" d="M-7.5 17 Q0 9.5 7.5 17"></path>
+        <g opacity="0" data-m="o" stroke="none"><ellipse cx="0" cy="15" rx="5.6" ry="7.2" fill="#6b1f1f"></ellipse><ellipse cx="0" cy="18.6" rx="3.4" ry="2.4" fill="#ff8f8f"></ellipse></g>
+        <g opacity="0" data-m="big" stroke="none"><path d="M-12.5 8 Q0 3 12.5 8 Q11 31 0 31 Q-11 31 -12.5 8Z" fill="#6b1f1f"></path><path d="M-7 25 Q0 19 7 25 Q4 30 0 30 Q-4 30 -7 25Z" fill="#ff8f8f"></path></g>
+        <path opacity="0" data-m="wavy" d="M-10 15 q2.5 -3.4 5 0 t5 0 t5 0 t5 0"></path>
+        <path opacity="0" data-m="flat" d="M-4.5 15 H4.5"></path>
+        <path opacity="0" data-m="smug" d="M-7 14 Q3 17 9 9"></path>
+      </g>
+      <g data-a="ic-egg-tears" opacity="0"><path class="drip" style="--d:0s" d="M-15 7 q-3.8 6.4 0 10 q3.8 -3.6 0 -10z" fill="#6ccbff"></path><path class="drip" style="--d:0.42s" d="M-15 7 q-3.8 6.4 0 10 q3.8 -3.6 0 -10z" fill="#6ccbff"></path><path class="drip" style="--d:0.84s" d="M-15 7 q-3.8 6.4 0 10 q3.8 -3.6 0 -10z" fill="#6ccbff"></path><path class="drip" style="--d:0s" d="M15 7 q-3.8 6.4 0 10 q3.8 -3.6 0 -10z" fill="#6ccbff"></path><path class="drip" style="--d:0.42s" d="M15 7 q-3.8 6.4 0 10 q3.8 -3.6 0 -10z" fill="#6ccbff"></path><path class="drip" style="--d:0.84s" d="M15 7 q-3.8 6.4 0 10 q3.8 -3.6 0 -10z" fill="#6ccbff"></path></g>
+    </g>
+    </g><g transform="translate(0 -128)"><g data-a="ic-crown">
+      <path d="M-46 10 L-52 -32 L-28 -8 L-14 -44 L0 -12 L14 -44 L28 -8 L52 -32 L46 10Z" fill="url(#gGold)" stroke="#a8721a" stroke-width="2.4" stroke-linejoin="round"></path>
+      <circle cx="-52" cy="-34" r="6" fill="url(#gGold)" stroke="#a8721a" stroke-width="2"></circle><circle cx="52" cy="-34" r="6" fill="url(#gGold)" stroke="#a8721a" stroke-width="2"></circle>
+      <circle cx="-14" cy="-46" r="6" fill="url(#gGold)" stroke="#a8721a" stroke-width="2"></circle><circle cx="14" cy="-46" r="6" fill="url(#gGold)" stroke="#a8721a" stroke-width="2"></circle>
+      <rect x="-48" y="4" width="96" height="16" rx="5" fill="url(#gGold)" stroke="#a8721a" stroke-width="2.4"></rect>
+      <circle cx="-26" cy="12" r="5" fill="#e8344d"></circle><circle cx="0" cy="12" r="6" fill="#2d8ce0"></circle><circle cx="26" cy="12" r="5" fill="#2fb36a"></circle>
+      <path d="M-40 -2 L-36 -20" stroke="#fff" stroke-width="3" stroke-linecap="round" opacity=".6"></path>
+    </g></g></g></svg></span><span class="nm">הֶחָצִיל הָאָצִיל</span><span class="pg">2</span></li>
+        <li><span class="ic"><svg viewBox="-140 -120 240 230" aria-hidden="true" focusable="false"><g data-a="ic-kf">
+      <path d="M28 8 L80 30 L74 42 L24 22Z" fill="#126fb8"></path>
+      <path d="M30 10 L76 30" stroke="#4fd4f5" stroke-width="3" opacity=".6"></path>
+      <g data-a="ic-kf-feet" stroke="#e5482e" stroke-width="4" stroke-linecap="round"><path d="M-6 40 L-10 54 M6 40 L4 54"></path></g>
+      <path d="M-22 -32 C 10 -42 42 -20 42 10 C 42 36 12 46 -14 42 C -42 36 -48 -22 -22 -32Z" fill="url(#gKfBlue)"></path>
+      <path d="M-38 -2 C -36 30 -10 46 15 42 C 32 38 40 24 38 14 C 10 22 -16 16 -38 -2Z" fill="url(#gKfOrange)"></path>
+      <g data-a="ic-kf-wingFold"><path d="M-12 -28 C 20 -38 50 -12 46 18 C 30 26 2 12 -12 -28Z" fill="#1678c0"></path><circle cx="31.2" cy="-15" r="1.6" fill="#bff0ff" opacity=".85"></circle><circle cx="13.8" cy="-11.3" r="2.7" fill="#bff0ff" opacity=".85"></circle><circle cx="-1.7" cy="-18.4" r="2.3" fill="#bff0ff" opacity=".85"></circle><circle cx="18" cy="-7" r="2.2" fill="#bff0ff" opacity=".85"></circle><circle cx="-0.4" cy="0.3" r="2.6" fill="#bff0ff" opacity=".85"></circle><circle cx="18.2" cy="1.3" r="2.5" fill="#bff0ff" opacity=".85"></circle><circle cx="7.2" cy="-1.4" r="2.6" fill="#bff0ff" opacity=".85"></circle><circle cx="5.1" cy="-5.7" r="2.7" fill="#bff0ff" opacity=".85"></circle><circle cx="17.3" cy="-14.7" r="2.4" fill="#bff0ff" opacity=".85"></circle>
+        <path d="M0 -6 C 14 4 30 10 44 12" stroke="#0d5c99" stroke-width="2" fill="none" opacity=".7"></path></g>
+      <g data-a="ic-kf-wingFly" opacity="0">
+        <g class="flap" style="--o:10% 100%;--a1:-34deg;--a2:30deg"><path d="M-4 -18 C -14 -78 26 -112 64 -104 C 42 -76 30 -44 12 -12Z" fill="url(#gKfBlue)"></path>
+          <path d="M8 -30 C 14 -60 34 -84 54 -96" stroke="#bff0ff" stroke-width="3" fill="none" opacity=".6"></path></g>
+      </g>
+      <g data-a="ic-kf-head">
+        <circle cx="-34" cy="-36" r="27" fill="url(#gKfBlue)"></circle>
+        <path d="M-60 -30 C -54 -14 -34 -10 -16 -18 C -22 -30 -42 -34 -60 -30Z" fill="url(#gKfOrange)"></path>
+        <path d="M-56 -18 C -50 -6 -38 -4 -28 -8 C -36 -14 -48 -16 -56 -18Z" fill="#fff"></path>
+        <path d="M-30 -18 C -20 -14 -10 -16 -2 -22 C -10 -26 -20 -24 -30 -18Z" fill="#fff" opacity=".9"></path>
+        <g class="blink" style="--d:-2s"><circle cx="-42" cy="-40" r="7.5" fill="#2b1a12"></circle><circle cx="-39.5" cy="-43" r="2.8" fill="#fff"></circle></g>
+        <path d="M-58 -42 L-124 -31 L-58 -28Z" fill="#2a2a33"></path>
+        <path d="M-60 -40 L-118 -32" stroke="#5a5a68" stroke-width="2"></path>
+        <g data-a="ic-kf-fish" opacity="0" transform="translate(-112 -26) rotate(-8)"><g class="wiggle" style="--o:30% 20%"><g transform="scale(0.75)">
+      <g class="tail" style="--o:0% 50%"><path d="M26 0 L46 -14 L42 0 L46 14Z" fill="url(#gFish2)"></path></g>
+      <ellipse cx="0" cy="0" rx="30" ry="14" fill="url(#gFish2)"></ellipse>
+      <path d="M-4 -12 Q6 -22 14 -12" fill="url(#gFish2)" opacity=".9"></path>
+      <path d="M8 -10 Q2 0 8 10" stroke="#fff" stroke-width="2" fill="none" opacity=".5"></path>
+      <circle cx="-16" cy="-3" r="3.6" fill="#2b1a12"></circle><circle cx="-15" cy="-4.2" r="1.3" fill="#fff"></circle>
+      <path d="M-28 2 q3 2 6 0" stroke="#2b1a12" stroke-width="1.5" fill="none"></path>
+    </g></g></g>
+      </g>
+    </g></svg></span><span class="nm">הַשַּׁלְדָּג</span><span class="pg">3</span></li>
+        <li><span class="ic"><svg viewBox="-110 -110 200 200" aria-hidden="true" focusable="false"><g data-a="ic-mom">
+      <path d="M34 0 L74 -8 L70 8 L36 14Z" fill="#7e4a2a"></path>
+      <g data-a="ic-mom-feet" stroke="#e8902c" stroke-width="4" stroke-linecap="round"><path d="M-6 40 L-8 54 M8 40 L8 54"></path></g>
+      <ellipse cx="0" cy="4" rx="44" ry="40" fill="url(#gBirdBack)"></ellipse>
+      <path d="M-40 -6 C -42 30 -14 46 10 44 C 26 42 34 30 30 18 C 12 24 -20 14 -40 -6Z" fill="#fffdf8"></path>
+      <path d="M-36 -10 C -40 22 -18 38 4 40" stroke="#e8e0d4" stroke-width="3" fill="none" opacity=".8"></path>
+      <g data-a="ic-mom-wingFold"><path d="M-6 -10 C 22 -20 46 0 40 26 C 22 30 2 18 -6 -10Z" fill="#9a5d36"></path>
+        <path d="M6 4 q12 6 28 8 M10 14 q10 4 22 6" stroke="#6e3c1e" stroke-width="2" fill="none"></path></g>
+      <g data-a="ic-mom-wingFly" opacity="0"><g class="flap" style="--o:0% 100%;--a1:-30deg;--a2:28deg">
+        <path d="M-2 -10 C -10 -64 30 -96 70 -90 C 48 -64 36 -36 14 -4Z" fill="#9a5d36"></path>
+        <path d="M14 -22 C 22 -48 40 -70 60 -82" stroke="#6e3c1e" stroke-width="2.4" fill="none"></path></g></g>
+      <g data-a="ic-mom-head">
+        <circle cx="-30" cy="-28" r="26" fill="url(#gBirdBack)"></circle>
+        <path d="M-50 -16 C -44 -4 -28 0 -14 -6 C -22 -14 -38 -18 -50 -16Z" fill="#fffdf8"></path>
+        <g class="blink" style="--d:-1.4s"><circle cx="-38" cy="-32" r="7" fill="#2b1a12"></circle><circle cx="-35.6" cy="-35" r="2.6" fill="#fff"></circle></g>
+        <ellipse cx="-34" cy="-18" rx="6" ry="3.5" fill="#ff8f8f" opacity=".55"></ellipse>
+        <g data-a="ic-mom-beak"><path d="M-54 -30 L-74 -24 L-54 -20Z" fill="#f4a42c"></path></g>
+        <g data-a="ic-mom-beakOpen" opacity="0"><path d="M-54 -32 L-76 -34 L-54 -25Z" fill="#f4a42c"></path><path d="M-54 -24 L-74 -16 L-54 -19Z" fill="#e08a1a"></path></g>
+      </g>
+      <g data-a="ic-mom-medal" opacity="0" transform="translate(-6 26)">
+        <path d="M-10 -22 L-4 -4 L4 -4 L10 -22Z" fill="#2d8ce0"></path><path d="M-6 -22 L0 -6 L6 -22" fill="#e8344d"></path>
+        <circle cx="0" cy="4" r="10" fill="url(#gGold)" stroke="#a8721a" stroke-width="2"></circle>
+        <path d="M0 -1 l1.8 3.6 4 .5 -2.9 2.8 .7 4 -3.6 -1.9 -3.6 1.9 .7 -4 -2.9 -2.8 4 -.5z" fill="#fff6c8"></path></g>
+    </g></svg></span><span class="nm">צִפּוֹר אֲצִילָה</span><span class="pg">4</span></li>
+        <li><span class="ic"><svg viewBox="-80 -100 160 190" aria-hidden="true" focusable="false"><g data-a="ic-tooth">
+      <path d="M-42 -52 C -42 -74 -16 -76 0 -62 C 16 -76 42 -74 42 -52 C 46 -20 38 10 32 32 C 27 52 21 72 12 72 C 4 72 4 42 0 42 C -4 42 -4 72 -12 72 C -21 72 -27 52 -32 32 C -38 10 -46 -20 -42 -52Z" fill="url(#gTooth)" stroke="#bccbdb" stroke-width="3"></path>
+      <path d="M-28 -56 C -34 -36 -32 -10 -24 10" stroke="#fff" stroke-width="8" stroke-linecap="round" fill="none" opacity=".9"></path>
+      <g transform="translate(0 -18) scale(1.05)" data-a="ic-tooth-face">
+      <ellipse cx="-24" cy="10" rx="7.5" ry="4.6" fill="#ff7f86" opacity=".5"></ellipse><ellipse cx="24" cy="10" rx="7.5" ry="4.6" fill="#ff7f86" opacity=".5"></ellipse>
+      <g data-a="ic-tooth-eyes"><g class="blink" style="--d:-2.4s">
+        <ellipse cx="-15" cy="0" rx="5.6" ry="7.6" fill="#2b1a12"></ellipse>
+        <ellipse cx="15" cy="0" rx="5.6" ry="7.6" fill="#2b1a12"></ellipse>
+        <circle cx="-13" cy="-3.2" r="2.4" fill="#fff"></circle><circle cx="17" cy="-3.2" r="2.4" fill="#fff"></circle>
+        <circle cx="-16.6" cy="3.2" r="1.1" fill="#fff" opacity=".8"></circle><circle cx="13.4" cy="3.2" r="1.1" fill="#fff" opacity=".8"></circle>
+      </g></g>
+      <g data-a="ic-tooth-dizzy" opacity="0" stroke="#2b1a12" stroke-width="2.2" fill="none" stroke-linecap="round"><path d="M-15 0 a1.6 1.6 0 1 1 3.2 0 a3.2 3.2 0 1 1 -6.4 0 a4.8 4.8 0 1 1 9.6 0 a6.2 6.2 0 1 1 -12.4 0"></path><path d="M15 0 a1.6 1.6 0 1 1 3.2 0 a3.2 3.2 0 1 1 -6.4 0 a4.8 4.8 0 1 1 9.6 0 a6.2 6.2 0 1 1 -12.4 0"></path></g>
+      <g data-a="ic-tooth-proud" opacity="0" stroke="#2b1a12" stroke-width="2.8" fill="none" stroke-linecap="round">
+        <path d="M-22 1 Q-15 -3 -8 1"></path><path d="M8 1 Q15 -3 22 1"></path>
+        <path d="M-22 -9 L-9 -6" stroke-width="2.2"></path><path d="M22 -9 L9 -6" stroke-width="2.2"></path></g>
+      <g data-a="ic-tooth-mouth" fill="none" stroke="#2b1a12" stroke-width="2.7" stroke-linecap="round" stroke-linejoin="round">
+        <path data-m="smile" d="M-7.5 11 Q0 18.5 7.5 11"></path>
+        <path opacity="0" data-m="grin" d="M-9 10 Q0 22 9 10 Z" fill="#7a2323" stroke-width="2.2"></path>
+        <path opacity="0" data-m="sad" d="M-7.5 17 Q0 9.5 7.5 17"></path>
+        <g opacity="0" data-m="o" stroke="none"><ellipse cx="0" cy="15" rx="5.6" ry="7.2" fill="#6b1f1f"></ellipse><ellipse cx="0" cy="18.6" rx="3.4" ry="2.4" fill="#ff8f8f"></ellipse></g>
+        <g opacity="0" data-m="big" stroke="none"><path d="M-12.5 8 Q0 3 12.5 8 Q11 31 0 31 Q-11 31 -12.5 8Z" fill="#6b1f1f"></path><path d="M-7 25 Q0 19 7 25 Q4 30 0 30 Q-4 30 -7 25Z" fill="#ff8f8f"></path></g>
+        <path opacity="0" data-m="wavy" d="M-10 15 q2.5 -3.4 5 0 t5 0 t5 0 t5 0"></path>
+        <path opacity="0" data-m="flat" d="M-4.5 15 H4.5"></path>
+        <path opacity="0" data-m="smug" d="M-7 14 Q3 17 9 9"></path>
+      </g>
+      <g data-a="ic-tooth-tears" opacity="0"><path class="drip" style="--d:0s" d="M-16 7 q-3.8 6.4 0 10 q3.8 -3.6 0 -10z" fill="#6ccbff"></path><path class="drip" style="--d:0.42s" d="M-16 7 q-3.8 6.4 0 10 q3.8 -3.6 0 -10z" fill="#6ccbff"></path><path class="drip" style="--d:0.84s" d="M-16 7 q-3.8 6.4 0 10 q3.8 -3.6 0 -10z" fill="#6ccbff"></path><path class="drip" style="--d:0s" d="M16 7 q-3.8 6.4 0 10 q3.8 -3.6 0 -10z" fill="#6ccbff"></path><path class="drip" style="--d:0.42s" d="M16 7 q-3.8 6.4 0 10 q3.8 -3.6 0 -10z" fill="#6ccbff"></path><path class="drip" style="--d:0.84s" d="M16 7 q-3.8 6.4 0 10 q3.8 -3.6 0 -10z" fill="#6ccbff"></path></g>
+    </g>
+    </g></svg></span><span class="nm">שֵׁן חָלָב</span><span class="pg">5</span></li>
+        <li><span class="ic"><svg viewBox="-175 -205 350 350" aria-hidden="true" focusable="false"><g transform="translate(0 10) scale(.82)"><g data-a="ic-rab">
+      <circle cx="58" cy="96" r="20" fill="#fff"></circle>
+      <ellipse cx="0" cy="80" rx="64" ry="72" fill="url(#gRabbit)"></ellipse>
+      <ellipse cx="0" cy="96" rx="38" ry="48" fill="#fff"></ellipse>
+      <ellipse cx="-36" cy="152" rx="30" ry="14" fill="#f4f0f6" stroke="#d8cfe2" stroke-width="2"></ellipse><ellipse cx="36" cy="152" rx="30" ry="14" fill="#f4f0f6" stroke="#d8cfe2" stroke-width="2"></ellipse>
+      <g data-a="ic-rab-collar" opacity="0"><path d="M-36 14 Q0 32 36 14" stroke="#e8344d" stroke-width="9" fill="none" stroke-linecap="round"></path>
+        <path d="M0 30 c-8 -10 -20 0 -10 10 l10 9 10 -9 c10 -10 -2 -20 -10 -10z" fill="url(#gGold)" stroke="#a8721a" stroke-width="1.6"></path></g>
+      <g data-a="ic-rab-ears">
+        <g class="ears" style="--d:-1s"><path d="M-30 -60 C -50 -120 -44 -190 -22 -196 C -2 -190 -2 -120 -12 -62Z" fill="url(#gRabbit)" stroke="#d8cfe2" stroke-width="2"></path>
+          <path d="M-26 -72 C -38 -120 -34 -170 -22 -178 C -12 -170 -12 -120 -16 -74Z" fill="#ffb8c8"></path></g>
+        <g class="ears" style="--d:-3.2s"><path d="M30 -60 C 50 -120 44 -190 22 -196 C 2 -190 2 -120 12 -62Z" fill="url(#gRabbit)" stroke="#d8cfe2" stroke-width="2"></path>
+          <path d="M26 -72 C 38 -120 34 -170 22 -178 C 12 -170 12 -120 16 -74Z" fill="#ffb8c8"></path></g>
+      </g>
+      <ellipse cx="0" cy="-26" rx="62" ry="54" fill="url(#gRabbit)"></ellipse>
+      <ellipse cx="-34" cy="-10" rx="11" ry="6.5" fill="#ff8fa6" opacity=".55"></ellipse><ellipse cx="34" cy="-10" rx="11" ry="6.5" fill="#ff8fa6" opacity=".55"></ellipse>
+      <g data-a="ic-rab-eyes"><g class="blink" style="--d:-2.2s">
+        <ellipse cx="-22" cy="-34" rx="8.5" ry="11" fill="#2b1a12"></ellipse><ellipse cx="22" cy="-34" rx="8.5" ry="11" fill="#2b1a12"></ellipse>
+        <circle cx="-19" cy="-38" r="3.4" fill="#fff"></circle><circle cx="25" cy="-38" r="3.4" fill="#fff"></circle><circle cx="-24" cy="-29" r="1.5" fill="#fff"></circle><circle cx="20" cy="-29" r="1.5" fill="#fff"></circle></g></g>
+      <g data-a="ic-rab-happy" opacity="0" stroke="#2b1a12" stroke-width="3.4" fill="none" stroke-linecap="round"><path d="M-30 -32 Q-22 -42 -14 -32 M14 -32 Q22 -42 30 -32"></path></g>
+      <g class="nose"><path d="M-7 -16 h14 l-7 7z" fill="#ff7f99"></path></g>
+      <path d="M0 -9 v6 M0 -3 q-6 6 -12 2 M0 -3 q6 6 12 2" stroke="#2b1a12" stroke-width="2.3" fill="none" stroke-linecap="round"></path>
+      <g data-a="ic-rab-teeth"><rect x="-8" y="0" width="7.6" height="13" rx="2" fill="#fff" stroke="#c9c0d6" stroke-width="1.6"></rect><rect x="0.4" y="0" width="7.6" height="13" rx="2" fill="#fff" stroke="#c9c0d6" stroke-width="1.6"></rect></g>
+      <g data-a="ic-rab-chew" opacity="0"><ellipse cx="0" cy="4" rx="9" ry="6" fill="#6b1f1f"></ellipse><rect x="-6" y="-1" width="5.6" height="7" rx="1.5" fill="#fff"></rect><rect x="0.4" y="-1" width="5.6" height="7" rx="1.5" fill="#fff"></rect></g>
+      <g stroke="#a99bb8" stroke-width="1.6" opacity=".8"><path d="M-30 -10 h-34 M-30 -4 l-32 8 M30 -10 h34 M30 -4 l32 8"></path></g>
+    </g></g></svg></span><span class="nm">הָאַרְנָב</span><span class="pg">6</span></li>
+      </ol>
+    </div>
+  </section>
+<script>
+  // מכווץ את גודל המילים עד שכל השיר נכנס בכרטיס
+  (async () => {
+    await document.fonts.ready;
+    document.querySelectorAll('.lyrics').forEach((ly) => {
+      const inn = ly.firstElementChild;
+      const st = Array.from(inn.children);
+      const fit = () => {
+        let lo = 3, hi = 8.5;
+        for (let k = 0; k < 18; k++) {
+          const mid = (lo + hi) / 2;
+          ly.style.setProperty('--fs', mid + 'mm');
+          if (inn.offsetHeight <= ly.clientHeight && inn.offsetWidth <= ly.clientWidth) lo = mid; else hi = mid;
+        }
+        return lo;
+      };
+      const one = fit();
+      // ניסיון בשני טורים (הימני קודם), מחולקים לפי מספר השורות
+      const total = st.reduce((n, s) => n + s.children.length, 0);
+      const a = document.createElement('div'), b = document.createElement('div'), d = document.createElement('div');
+      a.className = b.className = 'col'; d.className = 'divider';
+      let n = 0;
+      st.forEach((s) => { (n + s.children.length / 2 <= total / 2 ? a : b).appendChild(s); n += s.children.length; });
+      inn.append(a, d, b); inn.classList.add('lyrics--two');
+      const two = fit();
+      if (two < one * 1.12) { inn.classList.remove('lyrics--two'); inn.replaceChildren(...st); }
+      ly.style.setProperty('--fs', (Math.max(one, two < one * 1.12 ? 0 : two) * .97).toFixed(2) + 'mm');
+    });
+    document.body.dataset.ready = '1';
+  })();
+</script>
+</body>
+</html>
